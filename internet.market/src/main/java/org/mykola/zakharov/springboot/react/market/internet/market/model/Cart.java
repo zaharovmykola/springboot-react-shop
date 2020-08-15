@@ -1,4 +1,4 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.model;
+package org.mykola.zakharov.springboot.react.market.internet.market.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

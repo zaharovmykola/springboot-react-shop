@@ -1,11 +1,11 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.controller;
+package org.mykola.zakharov.springboot.react.market.internet.market.controller;
 
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Product;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ProductFilterModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ProductModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ProductSearchModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ResponseModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.service.ProductService;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Product;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ProductFilterModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ProductModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ProductSearchModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;

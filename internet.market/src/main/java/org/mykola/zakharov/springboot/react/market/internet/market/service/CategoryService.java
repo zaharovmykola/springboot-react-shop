@@ -1,9 +1,9 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.service;
+package org.mykola.zakharov.springboot.react.market.internet.market.service;
 
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.CategoryHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Category;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.CategoryModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ResponseModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.CategoryHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Category;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.CategoryModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;

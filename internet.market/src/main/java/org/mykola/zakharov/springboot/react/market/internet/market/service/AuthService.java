@@ -1,13 +1,13 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.service;
+package org.mykola.zakharov.springboot.react.market.internet.market.service;
 
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.RoleHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.UserHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Role;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.User;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ResponseModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.RoleModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.UserModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.UserRequestModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.RoleHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.UserHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Role;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.User;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.RoleModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.UserModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.UserRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;

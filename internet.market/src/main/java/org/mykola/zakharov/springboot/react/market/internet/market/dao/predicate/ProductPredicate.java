@@ -1,4 +1,4 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.predicate;
+package org.mykola.zakharov.springboot.react.market.internet.market.dao.predicate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,7 +7,7 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.StringPath;
 import org.apache.commons.lang3.StringUtils;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.criteria.SearchCriteria;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.criteria.SearchCriteria;
 import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Product;
 
 

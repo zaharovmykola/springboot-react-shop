@@ -1,8 +1,8 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.service.interfaces;
+package org.mykola.zakharov.springboot.react.market.internet.market.service.interfaces;
 
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ProductFilterModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ProductModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ResponseModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ProductFilterModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ProductModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
 
 public interface IProductService {
     ResponseModel create(ProductModel productModel);

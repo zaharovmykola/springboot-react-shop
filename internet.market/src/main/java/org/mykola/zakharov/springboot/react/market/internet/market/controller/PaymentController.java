@@ -1,4 +1,4 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.controller;
+package org.mykola.zakharov.springboot.react.market.internet.market.controller;
 
 import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Payment;
 import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.PaymentResponseModel;

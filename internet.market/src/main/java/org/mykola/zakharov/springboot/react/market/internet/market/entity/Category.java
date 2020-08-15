@@ -1,4 +1,4 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.entity;
+package org.mykola.zakharov.springboot.react.market.internet.market.entity;
 
 import lombok.*;
 
@@ -24,5 +24,5 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
-    private Set<Product> setOfProducts = new HashSet<>(0);
+    private Set<org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Product> setOfProducts = new HashSet<>(0);
 }

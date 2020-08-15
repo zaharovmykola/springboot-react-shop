@@ -1,13 +1,13 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop;
+package org.mykola.zakharov.springboot.react.market;
 
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.CategoryHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.ProductHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.RoleHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.UserHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Category;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Product;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Role;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.User;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.CategoryHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.ProductHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.RoleHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.UserHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Category;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Product;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Role;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;

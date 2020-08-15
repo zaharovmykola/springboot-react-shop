@@ -1,4 +1,4 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.util;
+package org.mykola.zakharov.springboot.react.market.internet.market.util;
 
 public class ErrorsGetter {
     public static String getException(Exception _ex) {

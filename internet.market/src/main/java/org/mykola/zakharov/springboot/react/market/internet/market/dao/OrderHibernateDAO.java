@@ -1,4 +1,4 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.dao;
+package org.mykola.zakharov.springboot.react.market.internet.market.dao;
 
 import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;

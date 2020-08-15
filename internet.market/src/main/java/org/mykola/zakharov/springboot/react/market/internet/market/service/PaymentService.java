@@ -1,9 +1,9 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.service;
+package org.mykola.zakharov.springboot.react.market.internet.market.service;
 
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.PaymentHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Payment;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.PaymentModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.PaymentResponseModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.PaymentHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Payment;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.PaymentModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.PaymentResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

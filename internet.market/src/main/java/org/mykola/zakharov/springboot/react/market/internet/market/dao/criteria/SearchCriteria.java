@@ -1,4 +1,4 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.criteria;
+package org.mykola.zakharov.springboot.react.market.internet.market.dao.criteria;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

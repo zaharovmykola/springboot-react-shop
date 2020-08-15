@@ -1,12 +1,12 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.service;
+package org.mykola.zakharov.springboot.react.market.internet.market.service;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.CategoryHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.ProductHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.predicate.ProductPredicatesBuilder;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Category;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Product;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.*;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.CategoryHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.ProductHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.predicate.ProductPredicatesBuilder;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Category;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Product;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;

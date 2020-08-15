@@ -1,7 +1,7 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.controller;
+package org.mykola.zakharov.springboot.react.market.internet.market.controller;
 
 import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Role;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.Cart;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.Cart;
 import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ResponseModel;
 import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.UserRequestModel;
 import org.mykola.zakharov.spring.boot.first.ecommerceshop.service.AuthService;

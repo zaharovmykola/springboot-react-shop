@@ -1,7 +1,7 @@
-package org.mykola.zakharov.spring.boot.first.ecommerceshop.security;
+package org.mykola.zakharov.springboot.react.market.internet.market.security;
 
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.UserHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.User;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.UserHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
