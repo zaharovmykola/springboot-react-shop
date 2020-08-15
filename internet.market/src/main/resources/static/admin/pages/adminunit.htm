@@ -1,0 +1,670 @@
+<!-- Представления разных разделов администрирования в одном файле -->
+<!-- TODO: page not found view -->
+<!-- Раздел администрирования категорий товаров -->
+<div id="categories-edit" class="container">
+    <div class="row">
+        <div class="col s3">
+            <div class="card grey lighten-2">
+                <div class="card-content">
+                    <span class="card-title">Category</span>
+                    <div class="row">
+                        <form class="col s12">
+<!--                            образовываем ряд с полем ввода-->
+                            <div class="row">
+<!--                                а вот поле ввода инпут-->
+                                <div class="input-field col s12">
+                                    <input id="name" name="name" type="text" class="validate" required pattern="^[A-zА-я0-9\s]{1,25}$">
+<!--                                    а вот метка к полю ввода с пояснением-->
+                                    <label for="name">category name</label>
+                                </div>
+                            </div>
+                            <div class="row">
+<!--                                и другой ряд с кнопкой-->
+                                <button class="btn waves-effect waves-light" type="submit" name="action">
+                                    Submit
+                                    <i class="material-icons right">send</i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 m9 l9 xl9">
+            <h4>Categories</h4>
+            <!-- Сюда при помощи jquery помещается шаблон таблицы, заполненный данными о категориях -->
+            <div class="row">
+                <div class="col s12 m12 l12 xl12">
+                    <div id="categories-container"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m12 l12 xl12">
+                    <div class="card horizontal">
+                        <div class="card-stacked">
+                            <div class="card-content">
+                                <form>
+                                    <button id="editCategory" class="waves-effect waves-light btn" type="button">
+                                        Edit
+                                        <i class="material-icons right">edit</i>
+                                    </button>
+                                    <button id="deleteCategory" class="waves-effect waves-light btn" type="button">
+                                        Delete
+                                        <i class="material-icons right">delete</i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Раздел администрирования товаров -->
+<div id="products-edit" class="container">
+    <div class="row">
+        <div class="col s12 m4 l4 xl4">
+            <div class="card grey lighten-2">
+                <div class="card-content">
+                    <span class="card-title">Product</span>
+                    <div class="row">
+                        <form class="col s12">
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <input id="title" name="title" type="text" class="validate" required>
+                                    <label for="title">title</label>
+                                </div>
+                                <div id="category-select" class="input-field col s12">
+                                    <select id="categoryselector" name="categoryselector" required="required" class="validate">
+                                        <option disabled selected="selected" value="">Category</option>
+                                    </select>
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="description">description</label>
+                                    <textarea name="description" id="description" class="materialize-textarea" required></textarea>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input id="price" name="price" type="text" class="validate" required>
+                                    <label for="price">price</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input id="quantity" name="quantity" type="text" class="validate" required>
+                                    <label for="quantity">quantity</label>
+                                </div>
+                                <div class="col s12">
+                                    <div class="file-field input-field">
+                                        <div class="btn">
+                                            <span>Image</span>
+                                            <input id="image-input" type="file">
+                                        </div>
+                                        <div class="file-path-wrapper">
+                                            <input class="file-path validate" type="text">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-field col s12">
+                                    <img id="image" class="responsive-img" src="">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <button class="btn waves-effect waves-light" type="submit" name="action">
+                                    Submit
+                                    <i class="material-icons right">send</i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 m8 l8 xl8">
+            <h4>Products</h4>
+            <!-- Сюда при помощи jquery помещается шаблон таблицы, заполненный данными о категориях -->
+            <div class="row">
+                <div class="col s12 m12 l12 xl12">
+                    <div id="products-container"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m12 l12 xl12">
+                    <div class="card horizontal">
+                        <div class="card-stacked">
+                            <div class="card-content">
+                                <form>
+                                    <button id="editProduct" class="waves-effect waves-light btn" type="button">
+                                        Edit
+                                        <i class="material-icons right">edit</i>
+                                    </button>
+                                    <button id="deleteProduct" class="waves-effect waves-light btn" type="button">
+                                        Delete
+                                        <i class="material-icons right">delete</i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    app.handler(function () {
+        return function (param) {
+            // Выбор контроллерной логики в зависимости от параметра
+            // адресной строки
+            switch (param) {
+                // Логика администрирования категорий
+                case "categories": {
+                    // попали в категорис
+                    // с помощбю джейквери находим див
+                    // включаем ему видивость дисплей_блок
+                    $('#categories-edit').css('display', 'block');
+                    // там находим разметку редактирования - и им дисплей-нон
+                    $('#products-edit').css('display', 'none');
+                    const categories = []
+                    let selectedCategory = null
+                    // Заполнение таблицы категорий
+                    let populateCategoriesTable = function () {
+                        // подготвливаем переменную под шаблон
+                        // в зависимости от ответа шаблон будет разный
+                        // в обвете - либо коллекция данных либо ничего нет либо ошибка
+                        let template
+                        // Асинхронный запрос на сервер для получения
+                        // данных о категориях
+                        // делаем запрос гет более низкоуровневой функцией ajax джейквери
+                        $.ajax({
+                            url: "api/categories"
+                            , type: 'GET'
+                            // ответ джет функция которую передали мы в done
+                            // ответ получаем в обект resp
+                            // в данном месте рассчитываем что все хорошо - что ответ получили
+                        }).done(function (resp) {
+                            // переверяем если чтото вообще есть там и равно ли слово слову success
+                                if (resp && resp.status === 'success') {
+                                template = Hogan.compile(
+                                    // подготовливаем шаблон
+                                   `<table class="table">
+                                        <thead>
+                                            <tr>
+<!--                                            имена двух колонок-->
+                                                <th>ID</th>
+                                                <th>name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#data}}
+                                                <tr>
+<!--                                                    th это ячейки которые формируют заготовок таблицы-->
+<!--                                                         но деоаем их ячейками строк -->
+<!--                                                        для этого пишем scope="row"-->
+                                                    <th scope="row">{{id}}</th>
+    <!--                                                 td это ячейки который формируют строки-->
+                                                    <td>{{name}}</td>
+                                                </tr>
+                                            {{/data}}
+                                            {{^data}}
+                                                <span>Categories list is empty</span>
+                                            {{/data}}
+                                        </tbody>
+                                    </table>`
+                                );
+                                    const respString =
+                                        decodeURIComponent(JSON.stringify(resp).replace(/(%2E)/ig, "%20"));
+                                    resp = JSON.parse(respString);
+                                    categories.length = 0
+                                    resp.data.forEach(category => {
+                                        categories.push(category)
+                                    })
+                                //Заполняем шаблон данными и помещаем на веб-страницу
+                                // включаем заполение шаблона данными и всталяем э то на html-страницу
+                                $('#categories-container').html(template.render(resp));
+                                // в самом начале кнопочки ediт и delete гасим если ни один пункт не выделен
+                                $("#editCategory, #deleteCategory").attr('disabled', '');
+                                //Устанавливаем обработчик кликов на все строки таблицы кроме заголовка
+                                // находим все рядки которые не являются первой строкой
+                                // функцией unbind уничтожаем старый обработчик события на всякий случай
+                                // отвязываем со всех строк кроме первой старый обработчик
+                                $("#categories-container tr:not(:first)").unbind("click");
+                                // и вешаем новый обработчкик
+                                $("#categories-container table tr:not(:first)").click(function () {
+                                    //Разблокируем кнопки, когда выбрана строка таблицы
+                                    $("#editCategory, #deleteCategory").removeAttr('disabled');
+                                    //Отмечаем текст выбранной строки зеленым цветом, с остальных строк выделение убираем
+                                    //(оно могло быть ранее установлено на одну из строк)
+                                    // с помощью написанного спец  стиля selectedTableRow
+                                    // берем this той строки на которую кликнули
+                                    // методом джейквери addClass добавляем класс selectedTableRow чтобы зеленым покрасить
+                                    // и теперь ищем всех siblings-родсвинников и удялаю у них тот же класс стиля
+                                    // чтобы они наверняка были все чорные а один только зеленый
+                                    $(this).addClass("selectedTableRow").siblings().removeClass("selectedTableRow");
+                                });
+                                // а иначе выводим на шаблон об ошибке если мы не получили данные
+                            } else {
+                                template = Hogan.compile(
+                                    '<span>Error. Status: {{status}}</span>'
+                                );
+                                //Заполняем шаблон сообщением об ошибке
+                                //и помещаем на веб-страницу
+                                $('#categories-container').html(template.render(resp));
+                            }
+                        }).fail(function (xhr, status, error) {
+                            /* template = Hogan.compile(
+                                '<span>Error: ' + error + '</span>'
+                            ) */
+                            alert("Error: " + error)
+                        }).always(function (resp) {
+                            if (resp && resp.status === "fail") {
+                                alert("Error: " + resp.message)
+                            }
+                        })
+                    }
+                    // теперь вызываю функцию заполения таблицы данными
+                    populateCategoriesTable();
+                    // и программирую обработчик клика по кнопке отправить форму
+                    $('#categories-edit button[type=submit]').unbind("click");
+                    $('#categories-edit button[type=submit]').click(
+                        function (ev) {
+                            ev.preventDefault();
+                            // это защита формы от отправки если там все не валидные поля
+                            if (!$('#categories-edit form')[0].checkValidity()){
+                                return false;
+                            }
+                            if (selectedCategory === null) {
+                            // но если онв все-таки валидные то нацеливаем ajax-запрос на api/categories
+                            $.ajax(
+                                // это все настроечный обьект запроса у джейквери
+                                {
+                                url: "api/categories"
+                                    // в поле data я кладу - образовую JavaScript обьект
+                                    // и получаэтся обект с полем нейм со занчением которое ввел пользователь
+                                    // пропускаем это через JSON.stringify
+                                    // и с JS-обекта получается JSON-строка
+                                    // и эту строку подключаем в стандартное поле data
+                                    // и тогда завершен настроечний обект для запроса и запрос уходит на сервер
+                                , data: JSON.stringify({
+                                        // кладу в него поле нейм
+                                        // в етом поле нахожу поле ввода нейм в форме
+                                        // джейквери фнукцией val считываю велью
+                                    'name': encodeURIComponent($('#categories-edit input#name').val())
+                                })
+                                // тип ему ставлю пост запрос
+                                , type: 'POST'
+                                // данные отправляемые
+                                , dataType : "json"
+                                // и данные принимаемые ставлю тип json
+                                , contentType : "application/json"
+                                    // когда ответ получен, помещаем ево в resp
+                            }).done(function (resp) {
+                                let template
+                                // переверяем resp, есть ли что-то в нем и равен ли success
+                                if (resp && resp.status === 'success') {
+                                    // и если success то перрисовываем всю таблицу
+                                    populateCategoriesTable();
+                                } else {
+                                    template = Hogan.compile(
+                                        '<span>Error. Status: {{status}}</span>'
+                                    );
+                                    let errorText = template.render(resp);
+                                }
+                            }).fail(function (xhr, status, error) {
+                                template = Hogan.compile(
+                                    '<span>Error. Status: ' + error + '</span>'
+                                );
+                                let errorText = template.render({});
+                            }).always(function (resp) {
+                                if (resp && resp.status === "fail") {
+                                    alert("Error: " + resp.message)
+                                }
+                            })
+                        } else {
+                                $.ajax({
+                                    url: "api/categories/" + selectedCategory.id
+                                    , data: JSON.stringify({
+                                        'name': encodeURIComponent($('#categories-edit input#name').val())
+                                    })
+                                    , type: 'PATCH'
+                                    , dataType : "json"
+                                    , contentType : "application/json"
+                                }).done(function (resp) {
+                                    let template
+                                    if (resp && resp.status === 'success') {
+                                        populateCategoriesTable();
+                                    } else {
+                                        template = Hogan.compile(
+                                            '<span>Error. Status: {{status}}</span>'
+                                        );
+                                        let errorText = template.render(resp);
+                                    }
+                                }).fail(function (xhr, status, error) {
+                                    template = Hogan.compile(
+                                        '<span>Error. Status: ' + error + '</span>'
+                                    );
+                                    let errorText = template.render({});
+                                }).always(function (resp) {
+                                    if (resp && resp.status === "fail") {
+                                        alert("Error: " + resp.message)
+                                    }
+                                    selectedCategory = null
+                                    $("#categories-edit form")[0].reset()
+                                })
+                            }
+                        }
+                    );
+                    //
+                    $("#deleteCategory").unbind("click");
+                    // вот обработчик для кнопки делит
+                    $('#deleteCategory').click(function (ev) {
+                        // preventDefault - предотвращаем стандартное поведение веб-страницы
+                        ev.preventDefault();
+                        let catId =
+                            // находим ту строку которая сейчас выделена зеленым
+                            // и в этой строке находим елемент th и с него считываем текст функцией text
+                            // th это тейблхедер, заголовок получается
+                            // так как знаем что th у нас только одна строка
+                            $('#categories-edit .selectedTableRow').find('th').text();
+                        let template;
+                        // делаем ajax запрос на заранее подготовлениий ендпонит делит
+                        // туда передаем идентификатор catId к адресной строке приклееваем
+                        $.ajax({
+                            url: "api/categories/" + catId
+                            , dataType : "json"
+                            , type: 'DELETE'
+                            // а это получаем в ответ
+                        }).done(function (resp) {
+                            if (resp && resp.status === 'success') {
+                                populateCategoriesTable()
+                            } else if (resp && resp.status === "fail") {
+                                alert("Error: " + resp.message)
+                            }
+                        })
+                    });
+                    $("#editCategory").unbind("click");
+                    $('#editCategory').click(function (ev) {
+                        ev.preventDefault();
+                        const selectedCategoryId =
+                            $('#categories-edit .selectedTableRow').find('th').text();
+                        selectedCategory =
+                            categories.filter(category => category.id == selectedCategoryId)[0];
+                        $('#categories-edit input#name').val(selectedCategory.name);
+                    });
+                    break;
+                }
+                //Логика администрирования наименований товаров
+                case "products": {
+                    $('#products-edit').css('display', 'block');
+                    $('#categories-edit').css('display', 'none');
+                    const products = []
+                    let selectedProduct = null
+                    //Get n render products table
+                    let populateProductsTable = function () {
+                        $.ajax({
+                            url: "api/products"
+                            , type: 'GET'
+                        }).done(function (resp) {
+                            if (resp && resp.status === 'success') {
+                                let template = Hogan.compile(
+                                    `<table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>title</th>
+                                                <th>category</th>
+                                                <th>price</th>
+                                                <th>quantity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#data}}
+                                                <tr>
+                                                    <th scope="row">{{id}}</th>
+                                                    <td>{{title}}</td>
+                                                    <td>{{category.name}}</td>
+                                                    <td>{{price}}</td>
+                                                    <td>{{quantity}}</td>
+                                                </tr>
+                                            {{/data}}
+                                            {{^data}}
+                                                <span>Products list is empty</span>
+                                            {{/data}}
+                                        </tbody>
+                                    </table>`
+                                );
+                                const respString =
+                                    decodeURIComponent(JSON.stringify(resp).replace(/(%2E)/ig, "%20"));
+                                resp = JSON.parse(respString);
+                                products.length = 0
+                                const respString =
+                                    decodeURIComponent(JSON.stringify(resp).replace(/(%2E)/ig, "%20"));
+                                resp = JSON.parse(respString);
+                                resp.data.forEach(product => {
+                                    products.push(product)
+                                })
+                                //Заполняем шаблон данными и помещаем на веб-страницу
+                                $('#products-container').html(template.render(resp));
+                                $("#editProduct, #deleteProduct").attr('disabled', '');
+                                //Устанавливаем обработчик кликов на все строки таблицы кроме заголовка
+                                $("#products-container tr:not(:first)").unbind("click");
+                                $("#products-container table tr:not(:first)").click(function () {
+                                    //Разблокируем кнопки, когда выбрана строка таблицы
+                                    $("#editProduct, #deleteProduct").removeAttr('disabled');
+                                    //Отмечаем текст выбранной строки зеленым цветом, с остальных строк выделение убираем
+                                    //(оно могло быть ранее установлено на одну из строк)
+                                    $(this).addClass("selectedTableRow").siblings().removeClass("selectedTableRow");
+                                });
+                            } else {
+                                template = Hogan.compile(
+                                    '<span>Error. Status: {{status}}</span>'
+                                );
+                                //Заполняем шаблон сообщением об ошибке
+                                //и помещаем на веб-страницу
+                                $('#products-container').html(template.render(resp));
+                            }
+                        }).fail(function (xhr, status, error) {
+                            template = Hogan.compile(
+                                '<span>Error: ' + error + '</span>'
+                            );
+                            //Заполняем шаблон сообщением об ошибке
+                            //и помещаем на веб-страницу
+                            $('#products-container').html(template.render(resp));
+                        }).always(function (resp) {
+                            if (resp && resp.status === "fail") {
+                                alert("Error: " + resp.message)
+                            }
+                        })
+                    }
+                    populateProductsTable();
+                    //Get n render all the categories (into dropdown)
+                    let populateCategoriesSelect = function () {
+                        $.ajax({
+                            type: 'GET',
+                            url: 'api/categories',
+                            dataType: 'json',
+                            cache: false
+                        }).done(function (resp, textStatus, jqXHR) {
+                            let template
+                            if (resp && resp.status === 'success') {
+                                //Готовим шаблон списка при помощи библиотеки Hogan
+                                template = Hogan.compile(
+                                    `<select>
+                                        <option disabled="" selected="" value="">Category</option>
+                                        {{#data}}
+                                        <option value="{{id}}">
+                                            {{name}}
+                                        </option>
+                                        {{/data}}
+                                    </select>`
+                                );
+                                const respString =
+                                    decodeURIComponent(JSON.stringify(resp).replace(/(%2E)/ig, "%20"));
+                                resp = JSON.parse(respString);
+                                //Заполняем шаблон данными и помещаем на веб-страницу
+                                $('#category-select').html(template.render(resp));
+                                $('#category-select select').formSelect();
+                            } else {
+                                template = Hogan.compile(
+                                    '<span>Error. Status: {{status}}</span>'
+                                );
+                                //Заполняем шаблон сообщением об ошибке
+                                //и помещаем на веб-страницу
+                                $('#products-container').html(template.render(resp));
+                            }
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                            //console.log(textStatus);
+                            alert("Ошибка получения списка categories list: " + jqXHR);
+                        }).always(function (resp) {
+                            if (resp && resp.status === "fail") {
+                                alert("Error: " + resp.message)
+                            }
+                        })
+                    }
+                    populateCategoriesSelect();
+                    //Prepare the image
+                    let imageBase64 = "";
+                    $('#products-edit form input#image-input').unbind("change");
+                    $('#products-edit form input#image-input').change(function (ev) {
+                        let file = ev.target.files[0];
+                        ImageTools.resize(file, {
+                            width: 300, // maximum width
+                            height: 300 // maximum height
+                        }, function (blob, didItResize) {
+                            let reader = new FileReader();
+                            reader.onloadend = function () {
+                                imageBase64 = reader.result;
+                                //console.log(imageBase64);
+                                $('#products-edit img#image').attr('src', imageBase64);
+                            }
+                            reader.readAsDataURL(blob);
+                        });
+                    });
+                    // New product form submit handler
+                    $('#products-edit button[type=submit]').unbind("click");
+                    $('#products-edit button[type=submit]').click(
+                        function (ev) {
+                            ev.preventDefault();
+
+                            // еще ето добавил по аналогии с категориями
+                            console.log($('#products-edit form #category-select li.selected:not(.disabled)'))
+                            if (!$('#products-edit form')[0].checkValidity()
+                                || $('#products-edit form #category-select li.selected:not(.disabled)').length === 0) {
+                                return false;
+                            }
+
+                            let selectedCategoryIndex =
+                                $('#products-edit form #category-select li.selected').index();
+                            let selectedCategoryId =
+                                $('#products-edit form #category-select select option')
+                                    .eq(selectedCategoryIndex)
+                                    .val();
+                            let formData = {
+                                'title' : encodeURIComponent($('#products-edit form #title').val())
+                                , 'description' : encodeURIComponent($('#products-edit form #description').val())
+                                , 'price' : $('#products-edit form #price').val()
+                                , 'quantity' : $('#products-edit form #quantity').val()
+                                , 'categoryId' : selectedCategoryId
+                                , 'image' : imageBase64
+                            };
+                            //
+                            if (selectedProduct === null) {
+                                $.ajax({
+                                    url: "api/products"
+                                    , data: JSON.stringify(formData)
+                                    , type: 'POST'
+                                    , dataType : "json"
+                                    , contentType : "application/json"
+                                }).done(function (resp) {
+                                    if (resp && resp.status === 'success') {
+                                        //
+                                        populateProductsTable();
+                                    } else {
+                                        template = Hogan.compile(
+                                            '<span>Error. Status: {{status}}</span>'
+                                        );
+                                        let errorText = template.render(resp);
+                                    }
+                                }).fail(function (jqXHR, textStatus, errorThrown) {
+                                    alert("Error: " + jqXHR);
+                                }).always(function (resp) {
+                                    if (resp && resp.status === "fail") {
+                                        alert("Error: " + resp.message)
+                                    }
+                                })
+                            } else {
+                                $.ajax({
+                                    url: "api/products/" + selectedProduct.id
+                                    , data: JSON.stringify(formData)
+                                    , type: 'PATCH'
+                                    , dataType : "json"
+                                    , contentType : "application/json"
+                                }).done(function (resp) {
+                                    if (resp && resp.status === 'success') {
+                                        //
+                                        populateProductsTable();
+                                    } else {
+                                        template = Hogan.compile(
+                                            '<span>Error. Status: {{status}}</span>'
+                                        );
+                                        let errorText = template.render(resp);
+                                    }
+                                }).fail(function (jqXHR, textStatus, errorThrown) {
+                                    alert("Error: " + jqXHR);
+                                }).always(function (resp) {
+                                    if (resp && resp.status === "fail") {
+                                        alert("Error: " + resp.message)
+                                    }
+                                    selectedProduct = null
+                                    $("#products-edit form")[0].reset()
+                                })
+                            }
+                        }
+                    );
+                    $('#deleteProduct').unbind("click");
+                    $('#deleteProduct').click(function (ev) {
+                        ev.preventDefault();
+                        let productId =
+                            $('#products-edit .selectedTableRow').find('th').text();
+                        //console.log(productId);
+                        $.ajax({
+                            url: "api/products/" + productId
+                            , type: 'DELETE'
+                        }).done(function (resp) {
+                            if (resp !== undefined && resp.status === 'success') {
+                                populateProductsTable();
+                            } else {
+                                template = Hogan.compile(
+                                    '<span>Error. Status: {{status}}</span>'
+                                );
+                                let errorText = template.render(resp);
+                            }
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                            alert("Error: " + jqXHR);
+                        }).always(function (resp) {
+                            if (resp && resp.status === "fail") {
+                                alert("Error: " + resp.message)
+                            }
+                        })
+                    });
+                    $("#editProduct").unbind("click");
+                    $('#editProduct').click(function (ev) {
+                        ev.preventDefault();
+                        const selectedProductId =
+                            $('#products-edit .selectedTableRow').find('th').text();
+                        console.log('selectedProductId', selectedProductId)
+                        selectedProduct =
+                            products.filter(product => product.id == selectedProductId)[0];
+                        console.log('products', products)
+                        console.log('selectedProduct', selectedProduct)
+                        $('#products-edit input#title').val(selectedProduct.title);
+                        $('#products-edit textarea#description').val(selectedProduct.description);
+                        $('#products-edit input#quantity').val(selectedProduct.quantity);
+                        $('#products-edit input#price').val(selectedProduct.price);
+                    });
+                    break;
+                }
+                default:
+            }
+            setTimeout(preloaderHide, 500);
+        };
+    });
+</script>
