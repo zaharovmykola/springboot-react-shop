@@ -1,10 +1,10 @@
 package org.mykola.zakharov.springboot.react.market.internet.market.controller;
 
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Role;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Role;
 import org.mykola.zakharov.springboot.react.market.internet.market.model.Cart;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ResponseModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.UserRequestModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.service.AuthService;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.UserRequestModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

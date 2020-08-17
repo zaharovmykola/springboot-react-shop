@@ -8,7 +8,7 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.StringPath;
 import org.apache.commons.lang3.StringUtils;
 import org.mykola.zakharov.springboot.react.market.internet.market.dao.criteria.SearchCriteria;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Product;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Product;
 
 
 import java.util.Arrays;

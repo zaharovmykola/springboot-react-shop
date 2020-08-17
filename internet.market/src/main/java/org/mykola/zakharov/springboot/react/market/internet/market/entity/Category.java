@@ -24,5 +24,5 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
-    private Set<org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Product> setOfProducts = new HashSet<>(0);
+    private Set<Product> setOfProducts = new HashSet<>(0);
 }

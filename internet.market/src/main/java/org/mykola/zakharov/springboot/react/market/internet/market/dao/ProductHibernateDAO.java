@@ -2,7 +2,7 @@ package org.mykola.zakharov.springboot.react.market.internet.market.dao;
 
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Product;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Product;
 import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.QProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

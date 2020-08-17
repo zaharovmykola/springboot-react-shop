@@ -4,14 +4,14 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.hibernate.exception.ConstraintViolationException;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ResponseModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
 import org.springframework.context.annotation.Configuration;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.util.ErrorsGetter;
+import org.mykola.zakharov.springboot.react.market.internet.market.util.ErrorsGetter;
 
 @Configuration
 @Aspect
 public class ExceptionsProcessor {
-    @Around("execution(* org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.*.*(..))")
+    @Around("execution(* org.mykola.zakharov.springboot.react.market.internet.market.dao.*.*(..))")
     public Object onDaoException(ProceedingJoinPoint pjp) throws Exception {
         Object output = null;
         try {
@@ -28,7 +28,7 @@ public class ExceptionsProcessor {
         return output;
     }
 
-    @Around("execution(* org.mykola.zakharov.spring.boot.first.ecommerceshop.service.*.*(..))")
+    @Around("execution(* org.mykola.zakharov.springboot.react.market.internet.market.service.*.*(..))")
     public Object onServiceException(ProceedingJoinPoint pjp) {
         Object output = null;
         try {

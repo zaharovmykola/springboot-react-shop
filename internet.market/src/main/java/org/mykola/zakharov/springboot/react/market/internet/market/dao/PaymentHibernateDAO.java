@@ -1,6 +1,6 @@
 package org.mykola.zakharov.springboot.react.market.internet.market.dao;
 
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Payment;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

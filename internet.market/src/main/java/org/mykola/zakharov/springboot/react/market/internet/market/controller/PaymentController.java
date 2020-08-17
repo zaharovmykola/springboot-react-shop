@@ -1,8 +1,8 @@
 package org.mykola.zakharov.springboot.react.market.internet.market.controller;
 
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Payment;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.PaymentResponseModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.service.PaymentService;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Payment;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.PaymentResponseModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
