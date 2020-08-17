@@ -21,9 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
@@ -31,7 +29,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@TestPropertySource(locations="classpath:application.properties")
+@TestPropertySource(locations = "classpath:application.properties")
 public class ProductServiceTest {
 
     @Value("tests.unit.strings.image-base64")
@@ -62,7 +60,7 @@ public class ProductServiceTest {
         // что вернуть? - объект типа сущность Category
         doReturn(returnCategoryFoldedInOptional()
         ).when(categoryDAO) // откуда? - из объекта categoryDAO
-        .findById(1L); // когда? - когда в метод findById передан аргумент 1
+                .findById(1L); // когда? - когда в метод findById передан аргумент 1
 
         ResponseModel responseModel =
                 productService.create(returnProductModelWithoutId());
@@ -117,7 +115,7 @@ public class ProductServiceTest {
                 productServiceMock.getAll();
         assertNotNull(responseModel);
         assertNotNull(responseModel.getData());
-        assertEquals(((List)responseModel.getData()).size(), 3);
+        assertEquals(((List) responseModel.getData()).size(), 3);
     }
 
     @Test
@@ -147,7 +145,8 @@ public class ProductServiceTest {
             // объявляем данный тест-кейс не пройденным
             // с выводом сообщения о причине
             fail("Should throw an IllegalArgumentException");
-        } catch (IllegalArgumentException ex) { }
+        } catch (IllegalArgumentException ex) {
+        }
         // после проверяем, был ли хотя бы один раз вызван метод save
         // с каким-либо аргументом (универсальная заглушка)
         // на объекте categoryDAO
@@ -210,7 +209,7 @@ public class ProductServiceTest {
     void shouldFilteredProductsSuccessfully() {
         final ProductFilterModel filter =
                 ProductFilterModel.builder()
-                    .categories(Arrays.asList(1L, 2L, 3L))
+                        .categories(Arrays.asList(1L, 2L, 3L))
                         .orderBy("ASC")
                         .sortingDirection(Sort.Direction.ASC)
                         .build();
@@ -227,13 +226,30 @@ public class ProductServiceTest {
         assertNotNull(responseModel.getData());
         // Проверка, что результат содержит положительный статус-код
         assertEquals(ResponseModel.SUCCESS_STATUS, responseModel.getStatus()); // цей може не тра
-        assertEquals(((List)responseModel.getData()).size(), 3);
+        assertEquals(((List) responseModel.getData()).size(), 3);
     }
 
-    ResponseModel returnListOfProductModels () {
+    @Test
+    void shouldGetProductsPriceBoundsSuccessfully() {
+        doReturn(returnListOfProductModels()
+        ).when(productService) // откуда? - из объекта categoryServiceMock
+                .getProductsPriceBounds(); // как результат вызова какого метода? - getAll
+
+        ResponseModel responseModel =
+                productService.getProductsPriceBounds();
+        assertNotNull(responseModel);
+        assertNotNull(responseModel.getData());
+        assertEquals(ResponseModel.SUCCESS_STATUS, responseModel.getStatus());
+        verify(productDAO, atLeast(1))
+                .findMinimum();
+        verify(productDAO, atLeast(1))
+                .findTop1ByOrderByPriceDesc();
+    }
+
+    ResponseModel returnListOfProductModels() {
         return ResponseModel.builder()
                 .status(ResponseModel.SUCCESS_STATUS)
-                .data(Arrays.asList(new ProductModel[] {
+                .data(Arrays.asList(new ProductModel[]{
                         ProductModel.builder().
                                 id(1L).title("c1").description("about c1").price(new BigDecimal(10.5)).
                                 quantity(5).image(imageBase64).categoryId(1L).build(),
@@ -247,11 +263,11 @@ public class ProductServiceTest {
                 .build();
     }
 
-    Optional<Category> returnCategoryFoldedInOptional () {
+    Optional<Category> returnCategoryFoldedInOptional() {
         return Optional.of(Category.builder().id(1L).name("c1").build());
     }
 
-    ProductModel returnProductModelWithoutId () {
+    ProductModel returnProductModelWithoutId() {
         return ProductModel.builder()
                 .title("test product 1").description("about test product 1")
                 .price(new BigDecimal(10.5)).quantity(5).image(imageBase64).categoryId(1L).build();
