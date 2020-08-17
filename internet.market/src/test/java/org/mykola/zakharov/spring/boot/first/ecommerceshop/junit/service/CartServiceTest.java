@@ -5,12 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.ProductHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Product;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.Cart;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.CartItem;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ResponseModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.service.CartService;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.ProductHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Product;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.Cart;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.CartItem;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.service.CartService;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;

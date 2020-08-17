@@ -2,11 +2,11 @@ package org.mykola.zakharov.spring.boot.first.ecommerceshop.application.controll
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.EcommerceShopApplication;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.security.HibernateWebAuthProvider;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.security.RestAuthenticationEntryPoint;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.security.SavedReqAwareAuthSuccessHandler;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.security.SecurityConfig;
+import org.mykola.zakharov.springboot.react.market.EcommerceShopApplication;
+import org.mykola.zakharov.springboot.react.market.internet.market.security.HibernateWebAuthProvider;
+import org.mykola.zakharov.springboot.react.market.internet.market.security.RestAuthenticationEntryPoint;
+import org.mykola.zakharov.springboot.react.market.internet.market.security.SavedReqAwareAuthSuccessHandler;
+import org.mykola.zakharov.springboot.react.market.internet.market.security.SecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;

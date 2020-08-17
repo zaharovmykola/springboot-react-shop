@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.EcommerceShopApplication;
+import org.mykola.zakharov.springboot.react.market.EcommerceShopApplication;
 import org.mykola.zakharov.spring.boot.first.ecommerceshop.ui.pagefactory.SignInPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;

@@ -2,11 +2,11 @@ package org.mykola.zakharov.spring.boot.first.ecommerceshop.application.controll
 
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.controller.ProductController;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ProductFilterModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ProductModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ProductSearchModel;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ResponseModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.controller.ProductController;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ProductFilterModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ProductModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ProductSearchModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;

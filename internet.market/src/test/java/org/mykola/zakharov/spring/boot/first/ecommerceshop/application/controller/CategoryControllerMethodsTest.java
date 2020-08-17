@@ -1,8 +1,8 @@
 package org.mykola.zakharov.spring.boot.first.ecommerceshop.application.controller;
 
 import org.junit.jupiter.api.Test;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.controller.CategoryController;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.CategoryModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.controller.CategoryController;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.CategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;

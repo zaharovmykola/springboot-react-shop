@@ -1,7 +1,7 @@
 package org.mykola.zakharov.spring.boot.first.ecommerceshop.application.controller;
 
 import org.junit.jupiter.api.Test;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.controller.AuthController;
+import org.mykola.zakharov.springboot.react.market.internet.market.controller.AuthController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;

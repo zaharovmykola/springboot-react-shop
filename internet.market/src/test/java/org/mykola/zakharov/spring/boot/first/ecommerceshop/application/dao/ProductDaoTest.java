@@ -1,11 +1,11 @@
 package org.mykola.zakharov.spring.boot.first.ecommerceshop.application.dao;
 
 import org.junit.jupiter.api.Test;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.EcommerceShopApplication;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.ProductHibernateDAO;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.dao.predicate.ProductPredicatesBuilder;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.entity.Product;
-import org.mykola.zakharov.spring.boot.first.ecommerceshop.model.ResponseModel;
+import org.mykola.zakharov.springboot.react.market.EcommerceShopApplication;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.ProductHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.predicate.ProductPredicatesBuilder;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Product;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
