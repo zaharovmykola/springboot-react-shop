@@ -14,7 +14,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-###.idea
+.idea
 *.iws
 *.iml
 *.ipr
@@ -37,7 +37,7 @@ src/main/resources/static/built/
 
 ### html-webpack-plugin ###
 index.html
-###/.idea/
+/.idea/
 
 ### webpack html plugin ###
 index.html
