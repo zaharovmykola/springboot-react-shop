@@ -2,18 +2,18 @@ import {action, observable} from "mobx"
 
 class CommonStore {
 
-    @observable loading: Boolean = true
-    @observable error: String = "hello error"
+    @observable loading: boolean = false
+    @observable error: string = null
 
-    @action setLoading(loading) {
+    @action setLoading(loading: boolean): void {
         this.loading = loading
     }
 
-    @action setError(error) {
+    @action setError(error: string): void {
         this.error = error
     }
 
-    @action clearError() {
+    @action clearError(): void {
         this.error = null
     }
 }

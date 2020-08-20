@@ -4,9 +4,13 @@ import ReactDOM from 'react-dom'
 import App from './components/App'
 import {Provider} from "mobx-react"
 import commonStore from "./stores/CommonStore"
+import userStore from "./stores/UserStore"
+import routerStore from "./stores/RouterStore"
 
 const stores = {
-    commonStore
+    commonStore,
+    userStore,
+    routerStore
 }
 
 ReactDOM.render(
