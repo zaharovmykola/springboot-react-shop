@@ -142,12 +142,12 @@ public class AuthService {
         return response;
     }
 
-    public ResponseModel onSignOut() {
+    /* public ResponseModel onSignOut() {
         return ResponseModel.builder()
             .status(ResponseModel.SUCCESS_STATUS)
             .message("Signed out")
             .build();
-    }
+    } */
 
     public ResponseModel onError() {
         return ResponseModel.builder()

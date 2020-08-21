@@ -4,7 +4,8 @@ import commonStore from './CommonStore'
 
 class UserStore {
 
-    private httpStatusOk: number = 200
+    private HTTP_STATUS_OK: number = 200
+    private HTTP_STATUS_NO_CONTENT: number = 204
 
     // current user
     @observable user: User = null
@@ -53,7 +54,7 @@ class UserStore {
             return response.status
         }).then((statusCode) => {
             // если в объекте отклика код статуса равен 200
-            if (statusCode == this.httpStatusOk) {
+            if (statusCode == this.HTTP_STATUS_OK) {
                 // запрос на конечную точку рест-контроллера аутентификации
                 // для проверки наличия веб-сеанса
                 // и для получения сведений о текущем пользователе
@@ -99,14 +100,10 @@ class UserStore {
         fetch('logout', {
             method: 'GET'
         }).then((response) => {
-            return response.json()
-        }).then((response) => {
-            if (response) {
-                if (response.status === 'success') {
-                    this.user = null
-                } else if (response.status === 'fail') {
-                    commonStore.setError(response.message)
-                }
+            return response.status
+        }).then((statusCode) => {
+            if (statusCode == this.HTTP_STATUS_NO_CONTENT) {
+                this.user = null
             }
         }).catch((error) => {
             commonStore.setError(error.message)

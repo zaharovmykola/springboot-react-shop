@@ -96,7 +96,8 @@ public class AuthController {
         // после выхода пользователя из аккаунта
         // пытаемся получить объект его корзины покупок из объекта сеанса,
         // и если получили - удаляем корзину из сеанса
-        return new ResponseEntity<>(authService.onSignOut(), HttpStatus.NO_CONTENT);
+        // return new ResponseEntity<>(authService.onSignOut(), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/user/onerror")
