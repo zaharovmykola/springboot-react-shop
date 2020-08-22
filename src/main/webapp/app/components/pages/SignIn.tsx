@@ -4,7 +4,7 @@ import {Button, Card, Col, Icon, Row, TextInput} from "react-materialize"
 import {inject, observer} from "mobx-react"
 import {reaction} from "mobx"
 
-@inject("commonStore", "userStore", "routerStore")
+@inject("commonStore", "userStore")
 @withRouter
 @observer
 class SignIn extends Component {
@@ -32,35 +32,6 @@ class SignIn extends Component {
         // вызываем в хранилище действие входа в учетную запись
         this.props.userStore.login()
     }
-
-    // установка обработчика события изменения значения
-    // в свойстве userStore.user хранилища -
-    // задано первым аргументом функции reaction;
-    // второй аргумент - функция, которая будет выполнена
-    // в ответ на изменения свойства userStore.user,
-    // при этом функция -второй аргумент получает в качестве своего аргумента
-    // данные, которые изменились (новую версию)
-    userReaction = reaction(
-        () => this.props.userStore.user, // следим за свойством user
-        (user) => {
-            // при изменении значения свойства user
-            if (user) {
-                // если user установлен -
-                // выполняем переход на раздел "Главная"
-                this.props.history.replace("/")
-                // и меняем текущий список моделей роутов
-                // - на список моделей роутов для вошедшего пользователя
-                this.props.routerStore.setLoggedRoutes()
-            } else {
-                // если пользователь не установлен -
-                // выполняем переход на раздел "Вход"
-                this.props.history.replace("/signin")
-                // и меняем текущий список моделей роутов
-                // - на список моделей роутов для пользователя-гостя
-                this.props.routerStore.setAnonymousRoutes()
-            }
-        }
-    )
     render () {
         const { loading } = this.props.commonStore
         const { userName, password } = this.props.userStore

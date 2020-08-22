@@ -45,7 +45,7 @@ public class AuthService {
             User.builder()
                 .name(userRequestModel.getName().trim())
                 .password(passwordEncoder.encode(userRequestModel.getPassword().trim()))
-                .role(roleDao.findRoleByName("user"))
+                .role(roleDao.findRoleByName("ROLE_USER"))
                 .build();
         userDao.save(user);
         return ResponseModel.builder()
@@ -131,6 +131,12 @@ public class AuthService {
         if (authentication != null && authentication.isAuthenticated()) {
             UserModel userModel = UserModel.builder()
                     .name(authentication.getName())
+                    .roleName(
+                            authentication.getAuthorities().stream()
+                                    .findFirst()
+                                    .get()
+                                    .getAuthority()
+                    )
                     .build();
             response.setStatus(ResponseModel.SUCCESS_STATUS);
             response.setMessage(String.format("User %s signed in", userModel.getName()));
@@ -142,13 +148,6 @@ public class AuthService {
         return response;
     }
 
-    /* public ResponseModel onSignOut() {
-        return ResponseModel.builder()
-            .status(ResponseModel.SUCCESS_STATUS)
-            .message("Signed out")
-            .build();
-    } */
-
     public ResponseModel onError() {
         return ResponseModel.builder()
                 .status(ResponseModel.FAIL_STATUS)
@@ -158,7 +157,7 @@ public class AuthService {
 
     public ResponseModel makeUserAdmin(Long id) throws Exception {
         // Получаем из БД объект роли администратора
-        Role role = roleDao.findRoleByName("admin");
+        Role role = roleDao.findRoleByName("ROLE_ADMIN");
         Optional<User> userOptional = userDao.findById(id);
         if (userOptional.isPresent()){
             User user = userOptional.get();

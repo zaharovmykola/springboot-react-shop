@@ -12,7 +12,6 @@ class Home extends Component {
         }
     }
     render () {
-        console.log(this.props.commonStore)
         return (
             <div>
                 <h1>Home Page</h1>

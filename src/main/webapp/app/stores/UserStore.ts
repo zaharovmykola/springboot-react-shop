@@ -70,7 +70,7 @@ class UserStore {
                     if (response) {
                         if (response.status === 'success') {
                             if (response.data) {
-                                this.user = new User(response.data.name)
+                                this.user = new User(response.data.name, response.data.roleName)
                             }
                         } else if (response.status === 'fail') {
                             // установка в переменную хранилища сообщения об ошибке
@@ -109,6 +109,42 @@ class UserStore {
             commonStore.setError(error.message)
             throw error
         }).finally(action(() => {
+            commonStore.setLoading(false)
+        }))
+    }
+    @action register () {
+        // сброс текста возможной предыдущей ошибки
+        commonStore.clearError()
+        // включение анимации ожидания
+        commonStore.setLoading(true)
+        // запрос на пользовательскую конечную точку /api/auth/user
+        // REST-контроллера AuthController
+        // с передачей имени и пароля пользователя для регистрации
+        fetch('api/auth/user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({'name': this.userName, 'password': this.password})
+        }).then((response) => {
+            // из полученного отклика сервера извлечь тело (json-строку)
+            // и передать для дальнейшей обработки
+            return response.json()
+        }).then((response) => {
+            // если в объекте отклика статус равен 'success'
+            if (response.status === 'success') {
+                this.login()
+            } else {
+                commonStore.setError(response.message)
+            }
+        }).catch((error) => {
+            // установка в переменную хранилища сообщения об ошибке
+            commonStore.setError(error.message)
+            // перевыброс объекта аргументов исключения
+            throw error
+        }).finally(action(() => {
+            // отключение анимации ожидания
             commonStore.setLoading(false)
         }))
     }
