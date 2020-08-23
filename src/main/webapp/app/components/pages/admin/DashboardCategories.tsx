@@ -3,7 +3,7 @@ import {Button, Card, CardTitle, Col, Icon, Row, SideNav, SideNavItem, TextInput
 import { NavLink } from 'react-router-dom'
 import {inject, observer} from "mobx-react"
 
-@inject("commonStore")
+@inject("commonStore", "categoryStore")
 @observer
 class DashboardCategories extends Component {
     handleSubmitForm = e => {
@@ -12,6 +12,12 @@ class DashboardCategories extends Component {
         e.preventDefault()
         // this.props.userStore.login()
     }
+    //////////////////////////////////////////////////////////////
+    // как я понимаю мы здесь просто записали категории в массив categories
+    componentDidMount() {
+        this.props.categoryStore.fetchCategories()
+    }
+    //////////////////////////////////////////////////////////////
     render () {
         const { loading } = this.props.commonStore
         return <Row>
@@ -58,6 +64,30 @@ class DashboardCategories extends Component {
                 </Col>
             </SideNav>
             {/* TODO Добавьте верхнюю и нижнюю части таблицы категорий, а между ними сгенерируйте из списка моделей набор строк таблицы */}
+            //////////////////////////////////////////////////////////////
+            // а здесь как я понимаю мы должны их просто вывести на екрна при переходе на вкладку
+
+            const { categories } = this.props.categoryStore
+            categories.fetchCategories()
+            {categories.map(category => {
+                /* выводим на панель навигации список категорий*/
+                return <NavLink
+                    activeClassName="active"
+                    exact
+                >
+                <Row>
+                    <Col>
+                        {category.id}
+                    </Col>
+                    <Col>
+                        {category.name}
+                    </Col>
+                </Row>
+                </NavLink>
+
+            })}
+
+            //////////////////////////////////////////////////////////////
         </Row>
     }
 }

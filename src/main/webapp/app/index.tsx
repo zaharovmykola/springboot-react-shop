@@ -6,11 +6,13 @@ import {Provider} from "mobx-react"
 import commonStore from "./stores/CommonStore"
 import userStore from "./stores/UserStore"
 import routerStore from "./stores/RouterStore"
+import categoryStore from "./stores/CategoryStore"
 
 const stores = {
     commonStore,
     userStore,
-    routerStore
+    routerStore,
+    categoryStore
 }
 
 ReactDOM.render(
