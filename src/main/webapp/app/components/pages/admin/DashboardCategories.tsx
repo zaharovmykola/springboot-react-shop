@@ -1,33 +1,47 @@
 import React, { Component } from 'react'
-import {Button, Card, CardTitle, Col, Icon, Row, SideNav, SideNavItem, TextInput} from "react-materialize"
+import {Button, Card, CardTitle, Col, Icon, Row, SideNav, SideNavItem, Table, TextInput} from "react-materialize"
 import { NavLink } from 'react-router-dom'
 import {inject, observer} from "mobx-react"
 
 @inject("commonStore", "categoryStore")
 @observer
 class DashboardCategories extends Component {
+
+    componentDidMount() {
+        this.props.categoryStore.fetchCategories()
+    }
+
+    handleCategoryNameChange = e => {
+        this.props.categoryStore.setCategoryName(e.target.value)
+    }
+
     handleSubmitForm = e => {
         // предотвращаем отправку данных формы на сервер браузером
         // и перезагрузку страницы
         e.preventDefault()
-        // this.props.userStore.login()
+        this.props.categoryStore.add()
     }
-    //////////////////////////////////////////////////////////////
-    // как я понимаю мы здесь просто записали категории в массив categories
-    componentDidMount() {
-        this.props.categoryStore.fetchCategories()
-    }
-    //////////////////////////////////////////////////////////////
+
     render () {
         const { loading } = this.props.commonStore
+        const { categories } = this.props.categoryStore
+        // const { currentCategory } = this.props.categoryStore
+        // const categoryName = currentCategory.name
         return <Row>
+            <h2>Categories</h2>
             <SideNav
                 id='categoryFormSideNav'
                 options={{
                     draggable: true
                 }}
                 trigger={
-                    <Button icon={<Icon>add</Icon>}/>
+                    <Button
+                        tooltip="Add a new category"
+                        tooltipOptions={{
+                            position: 'top'
+                        }}
+                        icon={<Icon>add</Icon>}
+                    />
                 }
             >
                 <Col
@@ -40,6 +54,7 @@ class DashboardCategories extends Component {
                                     id="name"
                                     label={'category name'}
                                     validate
+                                    onChange={this.handleCategoryNameChange}
                                 />
                             </Col>
                         </Row>
@@ -55,39 +70,51 @@ class DashboardCategories extends Component {
                                     send
                                 </Icon>
                             </Button>
-                            <button className="btn waves-effect waves-light" type="submit" name="action">
-                                Submit
-                                <i className="material-icons right">send</i>
-                            </button>
                         </Row>
                     </form>
                 </Col>
             </SideNav>
-            {/* TODO Добавьте верхнюю и нижнюю части таблицы категорий, а между ними сгенерируйте из списка моделей набор строк таблицы */}
-            //////////////////////////////////////////////////////////////
-            // а здесь как я понимаю мы должны их просто вывести на екрна при переходе на вкладку
-
-            const { categories } = this.props.categoryStore
-            categories.fetchCategories()
-            {categories.map(category => {
-                /* выводим на панель навигации список категорий*/
-                return <NavLink
-                    activeClassName="active"
-                    exact
-                >
-                <Row>
-                    <Col>
-                        {category.id}
-                    </Col>
-                    <Col>
-                        {category.name}
-                    </Col>
-                </Row>
-                </NavLink>
-
-            })}
-
-            //////////////////////////////////////////////////////////////
+            <Table>
+                <thead>
+                <tr>
+                    <th data-field="id">ID</th>
+                    <th data-field="name">Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                {categories.map(category => {
+                    /* выводим на панель навигации список категорий*/
+                    return (
+                        <tr>
+                            <td>{category.id}</td>
+                            <td>{category.name}</td>
+                            <td>
+                                <div data-category-id={category.id}>
+                                    <Button
+                                        node="button"
+                                        waves="light">
+                                        <Icon>edit</Icon>
+                                    </Button>
+                                    <Button
+                                        node="button"
+                                        waves="light">
+                                        <Icon>delete</Icon>
+                                    </Button>
+                                </div>
+                            </td>
+                        </tr>
+                    )
+                    /*<Row>
+                        <Col>
+                            {category.id}
+                        </Col>
+                        <Col>
+                            {category.name}
+                        </Col>
+                    </Row>*/
+                })}
+                </tbody>
+            </Table>
         </Row>
     }
 }
