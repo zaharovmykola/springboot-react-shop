@@ -53,7 +53,7 @@ class CategoryStore {
     @action add () {
         commonStore.clearError()
         commonStore.setLoading(true)
-        fetch('/eCommerceShop/api/category',{
+        fetch('/eCommerceShop/api/categories',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
