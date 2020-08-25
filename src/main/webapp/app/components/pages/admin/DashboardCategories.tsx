@@ -104,14 +104,7 @@ class DashboardCategories extends Component {
                             </td>
                         </tr>
                     )
-                    /*<Row>
-                        <Col>
-                            {category.id}
-                        </Col>
-                        <Col>
-                            {category.name}
-                        </Col>
-                    </Row>*/
+
                 })}
                 </tbody>
             </Table>
