@@ -11,8 +11,8 @@ class ProductStore {
 
     @observable products: Array<Product> = []
 
-    @action setProductName(name: string) {
-        this.currentProduct.name = name
+    @action setProductTitle(title: string) {
+        this.currentProduct.title = title
     }
 
     @action fetchProducts() {
@@ -59,14 +59,14 @@ class ProductStore {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify({'name': encodeURIComponent(this.currentProduct.name)})
+            body: JSON.stringify({'title': encodeURIComponent(this.currentProduct.title)})
         }).then((response) => {
             return response.status
         }).then(responseStatusCode => {
             if (responseStatusCode) {
                 if (responseStatusCode === this.HTTP_STATUS_CREATED) {
                     this.fetchProducts()
-                    this.setProductName('')
+                    this.setProductTitle('')
                 }
             }
         }).catch((error) => {

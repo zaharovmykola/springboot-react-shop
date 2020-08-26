@@ -10,8 +10,8 @@ class DashboardProducts extends Component {
         this.props.productStore.fetchProducts()
     }
 
-    handleProductNameChange = e => {
-        this.props.productStore.setProductName(e.target.value)
+    handleProductTitleChange = e => {
+        this.props.productStore.setProductTitle(e.target.value)
     }
 
     handleSubmitForm = e => {
@@ -49,10 +49,10 @@ class DashboardProducts extends Component {
                         <Row>
                             <Col s={12} >
                                 <TextInput
-                                    id="name"
-                                    label={'product name'}
+                                    id="title"
+                                    label={'product title'}
                                     validate
-                                    onChange={this.handleProductNameChange}
+                                    onChange={this.handleProductTitleChange}
                                 />
                             </Col>
                         </Row>
@@ -76,7 +76,10 @@ class DashboardProducts extends Component {
                 <thead>
                 <tr>
                     <th data-field="id">ID</th>
-                    <th data-field="name">Name</th>
+                    <th data-field="title">Name</th>
+                    <th data-field="description">Description</th>
+                    <th data-field="quantity">Quantity</th>
+                    <th data-field="price">Price</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -85,7 +88,10 @@ class DashboardProducts extends Component {
                     return (
                         <tr>
                             <td>{product.id}</td>
-                            <td>{product.name}</td>
+                            <td>{product.title}</td>
+                            <td>{product.description}</td>
+                            <td>{product.quantity}</td>
+                            <td>{product.price}</td>
                             <td>
                                 <div data-product-id={product.id}>
                                     <Button
