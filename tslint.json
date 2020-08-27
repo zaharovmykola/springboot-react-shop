@@ -81,7 +81,8 @@
     "eofline": false,
     "indent": [
       true,
-      "tabs"
+      "tabs",
+      4
     ],
     "max-line-length": [
       true,
