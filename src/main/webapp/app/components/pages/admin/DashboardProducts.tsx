@@ -1,19 +1,16 @@
 import React, {Component} from 'react'
 import {
 	Button,
-	Card,
-	CardTitle,
 	Col,
 	Icon,
 	Row,
 	Select,
 	SideNav,
-	SideNavItem,
 	Table,
 	TextInput
 } from 'react-materialize'
-import {NavLink} from 'react-router-dom'
 import {inject, observer} from 'mobx-react'
+import Resizer from 'react-image-file-resizer'
 
 @inject('commonStore', 'productStore', 'categoryStore')
 @observer
@@ -28,8 +25,20 @@ class DashboardProducts extends Component {
 		this.props.productStore.setProductTitle(e.target.value)
 	}
 
+	handleProductDescriptionChange = e => {
+		this.props.productStore.setProductDescription(e.target.value)
+	}
+
 	handleProductCategoryChange = e => {
 		this.props.productStore.setProductCategory(e.target.value)
+	}
+
+	handleProductImageChange = e => {
+		const file = e.target.files[0];
+		this.resizeFile(file).then(image => {
+			console.log(image)
+			this.props.productStore.setProductImage(image)
+		})
 	}
 
 	handleSubmitForm = e => {
@@ -38,6 +47,15 @@ class DashboardProducts extends Component {
 		e.preventDefault()
 		this.props.productStore.add()
 	}
+
+	resizeFile = (file) => new Promise(resolve => {
+		Resizer.imageFileResizer(file, 300, 300, 'JPEG', 100, 0,
+			uri => {
+				resolve(uri);
+			},
+			'base64'
+		);
+	})
 
 	render() {
 		const {loading} = this.props.commonStore
@@ -76,10 +94,16 @@ class DashboardProducts extends Component {
 						</Row>
 						<Row>
 							<Col s={12}>
-								{/*<select id='categoryselector' name='categoryselector' required='required'
-										className='validate'>
-									<option disabled selected='selected' value=''>Category</option>
-								</select>*/}
+								<TextInput
+									id='description'
+									label={'product description'}
+									validate
+									onChange={this.handleProductDescriptionChange}
+								/>
+							</Col>
+						</Row>
+						<Row>
+							<Col s={12}>
 								<Select
 									id='category-select'
 									multiple={false}
@@ -120,6 +144,20 @@ class DashboardProducts extends Component {
 										)
 									})}
 								</Select>
+							</Col>
+						</Row>
+						<Row>
+							<Col s={12}>
+								<TextInput
+									id="productImageInput"
+									label="Image"
+									type="file"
+									onChange={this.handleProductImageChange}
+									key={'productImageInput'}
+								/>
+							</Col>
+							<Col s={12} key={'productImagePreview'}>
+								<img id="productImagePreview" className="responsive-img" src={this.props.productStore.currentProductImage}></img>
 							</Col>
 						</Row>
 						<Row>

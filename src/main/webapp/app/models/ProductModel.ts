@@ -5,12 +5,14 @@ export default class ProductModel {
 	public quantity: number
 	public price: number
 	public categoryId: number
-	constructor (id?, title?, description?, quantity?, price?, categoryId?) {
+	public image: string
+	constructor (id?, title?, description?, quantity?, price?, categoryId?, image?) {
 		this.id = id
 		this.title = title
 		this.description = description
 		this.quantity = quantity
 		this.price = price
 		this.categoryId = categoryId
+		this.image = image
 	}
 }

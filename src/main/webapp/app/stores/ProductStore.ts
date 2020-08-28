@@ -1,7 +1,6 @@
 import {action, observable} from 'mobx'
 import Product from '../models/ProductModel'
 import commonStore from './CommonStore'
-import User from 'app/models/UserModel';
 
 class ProductStore {
 
@@ -11,12 +10,23 @@ class ProductStore {
 
 	@observable products: Array<Product> = []
 
+	@observable currentProductImage: string
+
 	@action setProductTitle(title: string) {
 		this.currentProduct.title = title
 	}
 
 	@action setProductCategory(categoryId: number) {
 		this.currentProduct.categoryId = categoryId
+	}
+
+	@action setProductDescription(description: string){
+		this.currentProduct.description = description
+	}
+
+	@action setProductImage(image: string){
+		this.currentProduct.image = image
+		this.currentProductImage = image
 	}
 
 	@action fetchProducts() {
@@ -65,7 +75,9 @@ class ProductStore {
 			},
 			body: JSON.stringify({
 				'title': encodeURIComponent(this.currentProduct.title),
-				'categoryId': this.currentProduct.categoryId
+				'description': encodeURIComponent(this.currentProduct.description),
+				'categoryId': this.currentProduct.categoryId,
+				'image': this.currentProduct.image
 			})
 		}).then((response) => {
 			return response.status
