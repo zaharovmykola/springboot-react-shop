@@ -21,6 +21,14 @@ class DashboardProducts extends Component {
 		this.props.productStore.fetchProducts()
 	}
 
+	///////////////////////////////////////////////////////////////
+	// пробую с обработчиком
+	handleProductDelete = e => {
+		e.preventDefault()
+		this.props.productStore.deleteProduct(e.target.)
+	}
+	///////////////////////////////////////////////////////////////
+
 	handleProductTitleChange = e => {
 		this.props.productStore.setProductTitle(e.target.value)
 	}
@@ -206,6 +214,7 @@ class DashboardProducts extends Component {
 									<Button
 										node='button'
 										waves='light'>
+										onClick={this.handleProductDelete}
 										<Icon>delete</Icon>
 									</Button>
 								</div>

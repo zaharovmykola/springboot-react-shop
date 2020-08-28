@@ -28,6 +28,31 @@ class ProductStore {
 		this.currentProduct.image = image
 		this.currentProductImage = image
 	}
+	// пробую с екшн
+	///////////////////////////////////////////////////////////////
+	@action deleteProduct(productId: number) {
+		commonStore.clearError()
+		commonStore.setLoading(true)
+		fetch('/eCommerceShop/api/products/' + '/{productId/}',{
+			method: 'DELETE'
+		}).then((response) => {
+			return response.json()
+		}).then(responseModel => {
+			if (responseModel) {
+				if (responseModel.status === 'success') {
+					new ProductStore().fetchProducts()
+				} else if (responseModel.status === 'fail') {
+					commonStore.setError(responseModel.message)
+				}
+			}
+		}).catch((error) => {
+			commonStore.setError(error.message)
+			throw error
+		}).finally(action(() => {
+			commonStore.setLoading(false)
+		}))
+	}
+	///////////////////////////////////////////////////////////////
 
 	@action fetchProducts() {
 		commonStore.clearError()

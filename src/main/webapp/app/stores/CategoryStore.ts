@@ -14,7 +14,31 @@ class CategoryStore {
     @action setCategoryName(name: string) {
         this.currentCategory.name = name
     }
-
+    // пробую с екшн
+    ///////////////////////////////////////////////////////////////
+    @action deleteCategory(categoryId: number) {
+        commonStore.clearError()
+        commonStore.setLoading(true)
+        fetch('/eCommerceShop/api/categories/' + '/{categoryId/}',{
+            method: 'DELETE'
+        }).then((response) => {
+            return response.json()
+        }).then(responseModel => {
+            if (responseModel) {
+                if (responseModel.status === 'success') {
+                    new CategoryStore().fetchCategories()
+                } else if (responseModel.status === 'fail') {
+                    commonStore.setError(responseModel.message)
+                }
+            }
+        }).catch((error) => {
+            commonStore.setError(error.message)
+            throw error
+        }).finally(action(() => {
+            commonStore.setLoading(false)
+        }))
+    }
+    ///////////////////////////////////////////////////////////////
     @action fetchCategories() {
         commonStore.clearError()
         commonStore.setLoading(true)

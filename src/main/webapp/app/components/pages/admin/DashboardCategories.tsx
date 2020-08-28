@@ -14,7 +14,13 @@ class DashboardCategories extends Component {
 	handleCategoryNameChange = e => {
 		this.props.categoryStore.setCategoryName(e.target.value)
 	}
-
+	///////////////////////////////////////////////////////////////
+	// пробую с обработчиком
+	handleCategoryDelete = e => {
+		e.preventDefault()
+		this.props.categoryStore.deleteCategory(e.target.)
+	}
+	///////////////////////////////////////////////////////////////
 	handleSubmitForm = e => {
 		// предотвращаем отправку данных формы на сервер браузером
 		// и перезагрузку страницы
@@ -98,6 +104,7 @@ class DashboardCategories extends Component {
 									<Button
 										node='button'
 										waves='light'>
+										onClick={this.handleCategoryDelete}
 										<Icon>delete</Icon>
 									</Button>
 								</div>
