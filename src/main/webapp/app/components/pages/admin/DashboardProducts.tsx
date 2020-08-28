@@ -25,7 +25,7 @@ class DashboardProducts extends Component {
 	// пробую с обработчиком
 	handleProductDelete = e => {
 		e.preventDefault()
-		this.props.productStore.deleteProduct(e.target.)
+		// this.props.productStore.deleteProduct(e.target.)
 	}
 	///////////////////////////////////////////////////////////////
 

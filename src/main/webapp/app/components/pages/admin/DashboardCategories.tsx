@@ -16,9 +16,9 @@ class DashboardCategories extends Component {
 	}
 	///////////////////////////////////////////////////////////////
 	// пробую с обработчиком
-	handleCategoryDelete = e => {
+	handleCategoryDelete = (e, categoryId) => {
 		e.preventDefault()
-		this.props.categoryStore.deleteCategory(e.target.)
+		this.props.categoryStore.deleteCategory(categoryId)
 	}
 	///////////////////////////////////////////////////////////////
 	handleSubmitForm = e => {
@@ -103,8 +103,10 @@ class DashboardCategories extends Component {
 									</Button>
 									<Button
 										node='button'
-										waves='light'>
-										onClick={this.handleCategoryDelete}
+										waves='light'
+										onClick={ e => {
+											this.handleCategoryDelete(e, category.id)
+										}}>
 										<Icon>delete</Icon>
 									</Button>
 								</div>
