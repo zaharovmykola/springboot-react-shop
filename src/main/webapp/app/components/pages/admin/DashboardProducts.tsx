@@ -23,9 +23,9 @@ class DashboardProducts extends Component {
 
 	///////////////////////////////////////////////////////////////
 	// пробую с обработчиком
-	handleProductDelete = e => {
+	handleProductDelete = (e, productId) => {
 		e.preventDefault()
-		// this.props.productStore.deleteProduct(e.target.)
+		this.props.productStore.deleteProduct(productId)
 	}
 	///////////////////////////////////////////////////////////////
 
@@ -213,8 +213,10 @@ class DashboardProducts extends Component {
 									</Button>
 									<Button
 										node='button'
-										waves='light'>
-										onClick={this.handleProductDelete}
+										waves='light'
+										onClick={ e => {
+											this.handleProductDelete(e, product.id)
+										}}>
 										<Icon>delete</Icon>
 									</Button>
 								</div>

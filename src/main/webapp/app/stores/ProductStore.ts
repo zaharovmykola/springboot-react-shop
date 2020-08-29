@@ -33,14 +33,14 @@ class ProductStore {
 	@action deleteProduct(productId: number) {
 		commonStore.clearError()
 		commonStore.setLoading(true)
-		fetch('/eCommerceShop/api/products/' + '/{productId/}',{
+		fetch(`/eCommerceShop/api/products/${productId}`,{
 			method: 'DELETE'
 		}).then((response) => {
 			return response.json()
 		}).then(responseModel => {
 			if (responseModel) {
 				if (responseModel.status === 'success') {
-					new ProductStore().fetchProducts()
+					this.fetchProducts()
 				} else if (responseModel.status === 'fail') {
 					commonStore.setError(responseModel.message)
 				}

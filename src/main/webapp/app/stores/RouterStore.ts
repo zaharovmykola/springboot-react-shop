@@ -46,21 +46,9 @@ class RouterStore {
 			if (user) {
 				let signOutRoute
 				// TODO refactoring
-				// if (user.roleName === 'ROLE_ADMIN') {
-				//     signOutRoute =
-				//         this.adminRoutes
-				//             .find(route => route['name'].includes('Sign out'))
-				// } else {
-				//     signOutRoute =
-				//         this.loggedRoutes
-				//             .find(route => route['name'].includes('Sign out'))
-				// }
 				signOutRoute =
 					this[user.roleName === 'ROLE_ADMIN' ? 'adminRoutes' : 'loggedRoutes']
 						.find(route => route['name'].includes('Sign out'))
-				/* signOutRoute = (user.roleName === 'ROLE_ADMIN') ?
-						this.adminRoutes.find(route => route['name'].includes('Sign out')) :
-						this.loggedRoutes.find(route => route['name'].includes('Sign out')) */
 				// в модель роута "Выход" в свойство name
 				// записываем текст: Sign out + ИМЯ_ПОЛЬЗОВАТЕЛЯ,
 				// где ИМЯ_ПОЛЬЗОВАТЕЛЯ узнаем из наблюдаемого свойства userStore.user
