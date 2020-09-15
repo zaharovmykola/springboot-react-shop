@@ -1,23 +1,17 @@
 package org.mykola.zakharov.springboot.react.market.internet.market.dao;
 
+import antlr.collections.List;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
 import org.mykola.zakharov.springboot.react.market.internet.market.entity.Product;
 import org.mykola.zakharov.springboot.react.market.internet.market.entity.QProduct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
-import org.springframework.data.querydsl.binding.SingleValueBinding;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ProductHibernateDAO extends JpaRepository<Product, Long>,
@@ -48,21 +42,7 @@ public interface ProductHibernateDAO extends JpaRepository<Product, Long>,
     }
 
     @Query( "SELECT MIN(p.price) FROM Product p" )
-    BigDecimal findMinimum (); //{
-        // if ()
-        /* return productDao.findAll().stream()
-            .min(
-                (p1, p2) -> p1.getPrice().subtract(p2.getPrice()).intValue()
-            ); */
-    //}
-    // find max price
-    // 1. find all
-    // 2. order by price DESC
-    // 3. get top 1
-    Product findTop1ByOrderByPriceDesc (); /* {
-        return productDao.findAll().stream()
-            .max(
-                (p1, p2) -> p1.getPrice().subtract(p2.getPrice()).intValue()
-            );
-    } */
+    BigDecimal findMinimum ();
+
+    Product findTop1ByOrderByPriceDesc ();
 }

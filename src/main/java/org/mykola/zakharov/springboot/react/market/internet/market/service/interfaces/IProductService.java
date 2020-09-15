@@ -2,12 +2,14 @@ package org.mykola.zakharov.springboot.react.market.internet.market.service.inte
 
 import org.mykola.zakharov.springboot.react.market.internet.market.model.ProductFilterModel;
 import org.mykola.zakharov.springboot.react.market.internet.market.model.ProductModel;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ProductSearchModel;
 import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
 
 public interface IProductService {
     ResponseModel create(ProductModel productModel);
+    ResponseModel update(ProductModel productModel);
     ResponseModel getAll();
     ResponseModel delete(Long id);
     ResponseModel getFiltered(ProductFilterModel filter);
-    ResponseModel getProductsPriceBounds();
+    ResponseModel search(ProductSearchModel searchModel);
 }

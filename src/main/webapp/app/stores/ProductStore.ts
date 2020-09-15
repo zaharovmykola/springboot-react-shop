@@ -121,4 +121,5 @@ class ProductStore {
 		}))
 	}
 }
+export {ProductStore}
 export default new ProductStore()

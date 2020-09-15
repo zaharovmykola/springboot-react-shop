@@ -149,4 +149,5 @@ class UserStore {
         }))
     }
 }
+export {UserStore}
 export default new UserStore()

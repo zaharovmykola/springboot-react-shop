@@ -1,13 +1,36 @@
 import React, { Component } from 'react'
 import { withRouter } from "react-router-dom"
-import {Button, Card, Col, Icon, Row, TextInput} from "react-materialize"
 import {inject, observer} from "mobx-react"
-import {reaction} from "mobx"
+// import { reaction } from "mobx"
+import {Button, Card, Grid, Icon, StyledProps, TextField, WithStyles, withStyles} from "@material-ui/core"
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import {CommonStore} from "app/stores/CommonStore";
+import {CategoryStore} from "app/stores/CategoryStore";
+import {UserStore} from "app/stores/UserStore";
+
+interface IProps extends WithStyles<typeof styles> {
+    commonStore: CommonStore,
+    userStore: UserStore
+}
+
+interface IState {
+}
+
+const styles = theme =>
+    ({
+        root: {
+            '& > *': {
+                margin: theme.spacing(1),
+                width: '25ch',
+            },
+        },
+    })
 
 @inject("commonStore", "userStore")
 @withRouter
 @observer
-class SignIn extends Component {
+class SignIn extends Component<IProps, IState> {
+
     componentWillUnmount() {
         this.props.userStore.reset()
     }
@@ -32,63 +55,45 @@ class SignIn extends Component {
         // вызываем в хранилище действие входа в учетную запись
         this.props.userStore.login()
     }
+
     render () {
         const { loading } = this.props.commonStore
         const { userName, password } = this.props.userStore
+        const { classes } = this.props
         return (
-            <Row>
-                <Col
-                    s={12}
-                >
-                    <Card
-                        className="grey lighten-2"
-                        closeIcon={<Icon>close</Icon>}
-                        title="Sign In"
+            <form className={classes.root}
+                  noValidate
+                  autoComplete="off"
+                  title="Sign In"
+            >
+                <div>
+                    <TextField
+                        label='Login'
+                        value={userName}
+                        onChange={this.handleUserNameChange}
+                    />
+                </div>
+                <div>
+                    <TextField
+                        label='Password'
+                        value={password}
+                        onChange={this.handlePasswordChange}
+                    />
+                </div>
+                <div>
+                    <Button
+                        disabled={loading}
+                        onClick={this.handleSubmitForm}
                     >
-                        <Row>
-                            <Col
-                                s={12}
-                            >
-                                <form>
-                                    <Row>
-                                        <TextInput
-                                            s={12}
-                                            label='Login'
-                                            validate
-                                            value={userName}
-                                            onChange={this.handleUserNameChange}
-                                        />
-                                    </Row>
-                                    <Row>
-                                        <TextInput
-                                            s={12}
-                                            label='Password'
-                                            validate
-                                            value={password}
-                                            onChange={this.handlePasswordChange}
-                                        />
-                                    </Row>
-                                    <Row>
-                                        <Button
-                                            node="button"
-                                            waves="light"
-                                            disabled={loading}
-                                            onClick={this.handleSubmitForm}
-                                        >
-                                            Submit
-                                            <Icon right>
-                                                send
-                                            </Icon>
-                                        </Button>
-                                    </Row>
-                                </form>
-                            </Col>
-                        </Row>
-                    </Card>
-                </Col>
-            </Row>
+                        Submit
+                        <Icon>
+                            send
+                        </Icon>
+                    </Button>
+                </div>
+            </form>
         )
     }
 }
 
-export default SignIn
+export default withStyles(styles)(SignIn)

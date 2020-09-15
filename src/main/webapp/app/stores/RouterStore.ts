@@ -71,5 +71,5 @@ class RouterStore {
 		this.routes = this.adminRoutes
 	}
 }
-
+export {RouterStore}
 export default new RouterStore()

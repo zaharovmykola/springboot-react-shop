@@ -17,4 +17,5 @@ class CommonStore {
         this.error = null
     }
 }
+export {CommonStore}
 export default new CommonStore()

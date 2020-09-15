@@ -1,10 +1,11 @@
-import {action, observable} from 'mobx'
+import {action, observable} from "mobx"
 import Category from '../models/CategoryModel'
 import commonStore from './CommonStore'
-import User from 'app/models/UserModel';
+import User from "app/models/UserModel";
 
 class CategoryStore {
 
+	private HTTP_STATUS_OK: number = 200
 	private HTTP_STATUS_CREATED: number = 201
 
 	@observable currentCategory: Category = new Category()
@@ -14,35 +15,15 @@ class CategoryStore {
 	@action setCategoryName(name: string) {
 		this.currentCategory.name = name
 	}
-	// пробую с екшн
-	///////////////////////////////////////////////////////////////
-	@action deleteCategory(categoryId: number) {
-		commonStore.clearError()
-		commonStore.setLoading(true)
-		fetch(`/eCommerceShop/api/categories/${categoryId}`, {
-			method: 'DELETE'
-		}).then((response) => {
-			return response.json()
-		}).then(responseModel => {
-			if (responseModel) {
-				if (responseModel.status === 'success') {
-					this.fetchCategories()
-				} else if (responseModel.status === 'fail') {
-					commonStore.setError(responseModel.message)
-				}
-			}
-		}).catch((error) => {
-			commonStore.setError(error.message)
-			throw error
-		}).finally(action(() => {
-			commonStore.setLoading(false)
-		}))
+
+	@action setCurrentCategory(category: Category) {
+		this.currentCategory = category
 	}
-	///////////////////////////////////////////////////////////////
+
 	@action fetchCategories() {
 		commonStore.clearError()
 		commonStore.setLoading(true)
-		fetch('/eCommerceShop/api/categories', {
+		fetch('/eCommerceShop/api/categories',{
 			method: 'GET'
 		}).then((response) => {
 			return response.json()
@@ -59,7 +40,7 @@ class CategoryStore {
 						JSON.parse(
 							decodeURIComponent(
 								JSON.stringify(responseModel.data)
-									.replace(/(%2E)/ig, '%20')
+									.replace(/(%2E)/ig, "%20")
 							)
 						)
 				} else if (responseModel.status === 'fail') {
@@ -77,7 +58,7 @@ class CategoryStore {
 	@action add () {
 		commonStore.clearError()
 		commonStore.setLoading(true)
-		fetch('/eCommerceShop/api/categories', {
+		fetch('/eCommerceShop/api/category',{
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -90,7 +71,35 @@ class CategoryStore {
 			if (responseStatusCode) {
 				if (responseStatusCode === this.HTTP_STATUS_CREATED) {
 					this.fetchCategories()
+					this.setCurrentCategory(new Category())
+				}
+			}
+		}).catch((error) => {
+			commonStore.setError(error.message)
+			throw error
+		}).finally(action(() => {
+			commonStore.setLoading(false)
+		}))
+	}
+
+	@action update () {
+		commonStore.clearError()
+		commonStore.setLoading(true)
+		fetch(`/eCommerceShop/api/category/${this.currentCategory.id}`,{
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			},
+			body: JSON.stringify({'name': encodeURIComponent(this.currentCategory.name)})
+		}).then((response) => {
+			return response.status
+		}).then(responseStatusCode => {
+			if (responseStatusCode) {
+				if (responseStatusCode === this.HTTP_STATUS_OK) {
+					this.fetchCategories()
 					this.setCategoryName('')
+					this.setCurrentCategory(new Category())
 				}
 			}
 		}).catch((error) => {
@@ -101,4 +110,5 @@ class CategoryStore {
 		}))
 	}
 }
+export {CategoryStore}
 export default new CategoryStore()

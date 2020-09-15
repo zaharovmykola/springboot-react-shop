@@ -1,10 +1,33 @@
 import React, { Component } from 'react'
-import {Button, Card, Col, Icon, Row, TextInput} from "react-materialize"
+import { withRouter } from "react-router-dom"
 import {inject, observer} from "mobx-react"
+import {Button, Icon, TextField, withStyles, WithStyles} from "@material-ui/core"
+import {CommonStore} from "app/stores/CommonStore";
+import {UserStore} from "app/stores/UserStore";
+
+interface IProps extends WithStyles<typeof styles> {
+    commonStore: CommonStore,
+    userStore: UserStore
+}
+
+interface IState {
+}
+
+const styles = theme =>
+    ({
+        root: {
+            '& > *': {
+                margin: theme.spacing(1),
+                width: '25ch',
+            },
+        },
+    })
 
 @inject("commonStore", "userStore")
+@withRouter
 @observer
-class SignUp extends Component {
+class SignUp extends Component<IProps, IState> {
+
     componentWillUnmount() {
         this.props.userStore.reset()
     }
@@ -21,63 +44,45 @@ class SignUp extends Component {
         e.preventDefault()
         this.props.userStore.register()
     }
+
     render () {
         const { loading } = this.props.commonStore
         const { userName, password } = this.props.userStore
         return (
-            <Row>
-                <Col
-                    s={12}
-                >
-                    <Card
-                        className="grey lighten-2"
-                        closeIcon={<Icon>close</Icon>}
-                        title="Register"
+            <form
+                className="grey lighten-2"
+                noValidate
+                autoComplete="off"
+                title="Register"
+            >
+                <div>
+                    <TextField
+                        label='Login'
+                        value={userName}
+                        onChange={this.handleUserNameChange}
+                    />
+                </div>
+                <div>
+                    <TextField
+                        label='Password'
+                        value={password}
+                        onChange={this.handlePasswordChange}
+                    />
+                </div>
+                <div>
+                    <Button
+                        disabled={loading}
+                        onClick={this.handleSubmitForm}
                     >
-                        <Row>
-                            <Col
-                                s={12}
-                            >
-                                <form>
-                                    <Row>
-                                        <TextInput
-                                            s={12}
-                                            label='Login'
-                                            validate
-                                            value={userName}
-                                            onChange={this.handleUserNameChange}
-                                        />
-                                    </Row>
-                                    <Row>
-                                        <TextInput
-                                            s={12}
-                                            label='Password'
-                                            validate
-                                            value={password}
-                                            onChange={this.handlePasswordChange}
-                                        />
-                                    </Row>
-                                    <Row>
-                                        <Button
-                                            node="button"
-                                            waves="light"
-                                            disabled={loading}
-                                            onClick={this.handleSubmitForm}
-                                        >
-                                            Submit
-                                            <Icon right>
-                                                send
-                                            </Icon>
-                                        </Button>
-                                    </Row>
-                                </form>
-                            </Col>
-                        </Row>
-                    </Card>
-                </Col>
-            </Row>
+                        Submit
+                        <Icon>
+                            send
+                        </Icon>
+                    </Button>
+                </div>
+            </form>
         )
     }
 }
 
-export default SignUp
+export default withStyles(styles) (SignUp)
