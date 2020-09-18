@@ -17,5 +17,9 @@ class CommonStore {
         this.error = null
     }
 }
+// делаем доступным для импорта из текущего модуля
+// сам тип хранилища CommonStore
 export {CommonStore}
+// делаем доступным для импорта из текущего модуля по умолчанию
+// экземпляр общего хранилища типа CommonStore
 export default new CommonStore()

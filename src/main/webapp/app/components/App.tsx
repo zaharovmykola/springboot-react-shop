@@ -1,7 +1,4 @@
 import React, { Component } from 'react'
-// import {Container, Icon, Navbar, NavItem, Toast} from 'react-materialize'
-// import 'materialize-css/dist/css/materialize.min.css'
-// import 'materialize-css/dist/js/materialize.min'
 import './style.css'
 import {
     Router,
@@ -9,26 +6,32 @@ import {
     NavLink
 } from 'react-router-dom'
 import { CSSTransition } from 'react-transition-group'
-import {inject, observer} from "mobx-react"
-import {reaction} from "mobx"
+import {inject, observer} from 'mobx-react'
+import {reaction} from 'mobx'
 import history from '../history'
-import {AppBar, Container, IconButton, Toolbar, Typography, WithStyles, withStyles} from "@material-ui/core"
+import {AppBar, Container, IconButton, Modal, Toolbar, Typography, WithStyles, withStyles} from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
-// import {CommonStore} from "app/stores/CommonStore";
-import {UserStore} from "app/stores/UserStore";
-import {RouterStore} from "app/stores/RouterStore";
+import {UserStore} from '../stores/UserStore';
+import {RouterStore} from '../stores/RouterStore';
+import AppBarCollapse from "../components/common/AppBarCollapse";
+import {CommonStore} from "../stores/CommonStore";
 
 interface IProps extends WithStyles<typeof styles> {
     routerStore: RouterStore,
-    userStore: UserStore
+    userStore: UserStore,
+    commonStore: CommonStore
 }
 
 interface IState {
 }
 
+// получаем готовые стили темы material-ui
 const styles = theme =>
     ({
+        // объявление пользовательского класса стиля
+        // (для корневого компонента разметки текущего компонента)
         root: {
+            // атрибут класса стиля
             flexGrow: 1,
         },
         menuButton: {
@@ -37,9 +40,22 @@ const styles = theme =>
         title: {
             flexGrow: 1,
         },
+        navBar: {
+            color: '#fff',
+            backgroundColor: '#ee6e73',
+        },
+        modalContent: {
+            position: 'absolute',
+            top: `5%`,
+            left: `5%`,
+            backgroundColor: theme.palette.background.paper,
+            border: '2px solid #000',
+            boxShadow: theme.shadows[5],
+            padding: theme.spacing(2, 4, 3),
+        }
     })
 
-@inject("routerStore", "userStore")
+@inject('routerStore', 'userStore', 'commonStore')
 @observer
 class App extends Component<IProps, IState> {
     // установка обработчика события изменения значения
@@ -55,8 +71,8 @@ class App extends Component<IProps, IState> {
             // при изменении значения свойства user
             if (user) {
                 // если user установлен -
-                // выполняем переход на раздел "Главная"
-                history.replace("/")
+                // выполняем переход на раздел 'Главная'
+                history.replace('/')
 
                 if (user.roleName === 'ROLE_ADMIN') {
                     // ... и меняем текущий список моделей роутов
@@ -71,49 +87,32 @@ class App extends Component<IProps, IState> {
                 }
             } else {
                 // если пользователь не установлен -
-                // выполняем переход на раздел "Вход"
-                history.replace("/signin")
+                // выполняем переход на раздел 'Вход'
+                history.replace('/signin')
                 // и меняем текущий список моделей роутов
                 // - на список моделей роутов для пользователя-гостя
                 this.props.routerStore.setAnonymousRoutes()
             }
         }
     )
+
+    handleModalClose = (e) => {
+        this.props.commonStore.setError(null)
+    }
+
     render () {
         const { routes } = this.props.routerStore
+        // получаем через пропс из обертки withStyles(styles) весь набор классов стилей,
+        // который будет доступен из константы classes
         const { classes } = this.props
         return <Router history={history}>
             <div className={classes.root}>
-                <AppBar position="static">
+                <AppBar position='static' className={classes.navBar}>
                     <Toolbar>
-                        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                            <MenuIcon/>
-                        </IconButton>
-                        <Typography variant="h6" className={classes.title}>
+                        <Typography variant='h6' className={classes.title}>
                             ReactSPA
                         </Typography>
-                        {routes.map(route => {
-                            /* выводим на панель навигации ссылки только на те разделы сайта,
-                            * в имени модели роута которых не встречается шаблон:
-                            * слово Dashboard + один или более символов латинского алфавита
-                            * в верхнем или нижнем регистре
-                            * (так пользователь администратор увилит ссылку на главную страницу админпанели,
-                            * но не увидит лишние ссылки на разделы админпанели)*/
-                            if(!/^Dashboard[A-z]+$/.test(route.name)) {
-                                return <NavLink
-                                    key={route.path}
-                                    as={NavLink}
-                                    to={route.path}
-                                    activeClassName="active"
-                                    exact
-
-                                >
-                                    {route.name}
-                                </NavLink>
-                            } else {
-                                return ''
-                            }
-                        })}
+                        <AppBarCollapse routes={routes} />
                     </Toolbar>
                 </AppBar>
                 <Container>
@@ -123,10 +122,10 @@ class App extends Component<IProps, IState> {
                                 <CSSTransition
                                     in={match != null}
                                     timeout={300}
-                                    classNames="page"
+                                    classNames='page'
                                     unmountOnExit
                                 >
-                                    <div className="page">
+                                    <div className='page'>
                                         <Component />
                                     </div>
                                 </CSSTransition>
@@ -134,6 +133,16 @@ class App extends Component<IProps, IState> {
                         </Route>
                     ))}
                 </Container>
+                <Modal
+                    open={ !!this.props.commonStore.error }
+                    onClose={ this.handleModalClose }
+                    aria-labelledby="simple-modal-title"
+                    aria-describedby="simple-modal-description"
+                >
+                    <div className={classes.modalContent}>
+                        {this.props.commonStore.error}
+                    </div>
+                </Modal>
             </div>
         </Router>
     }

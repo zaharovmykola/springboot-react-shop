@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {inject, observer} from 'mobx-react'
 import Resizer from 'react-image-file-resizer'
 import {reaction} from "mobx"
+import Compress from "compress.js"
+import {Button, Icon, Table} from "@material-ui/core";
 
 @inject('commonStore', 'productStore', 'categoryStore')
 @observer
@@ -30,6 +32,19 @@ class DashboardProducts extends Component {
 			console.log(image)
 			this.props.productStore.setProductImage(image)
 		})
+	}
+
+	handleProductEdit = (e, productId) => {
+		this.setState({formMode: 'edit'})
+		this.setState({sidePanelVisibility: true})
+		const currentProduct =
+			this.props.productStore.products.find(c => c.id === productId)
+		this.props.productStore.setCurrentProduct(currentProduct)
+	}
+
+	handleProductDelete = (e, productId) => {
+		this.props.productStore.setCurrentProductId(productId)
+		this.props.productStore.deleteProduct()
 	}
 
 	handleSubmitForm = e => {
@@ -164,45 +179,48 @@ class DashboardProducts extends Component {
                         </Row>
                     </form>
                 </Col>
-            </SideNav>
-            <Table>
-                <thead>
-                <tr>
-                    <th data-field='id'>ID</th>
-                    <th data-field='title'>Name</th>
-                    <th data-field='description'>Description</th>
-                    <th data-field='quantity'>Quantity</th>
-                    <th data-field='price'>Price</th>
-                </tr>
-                </thead>
-                <tbody>
-                {products.map(product => {
-                    return (
-                        <tr>
-                            <td>{product.id}</td>
-                            <td>{product.title}</td>
-                            <td>{product.description}</td>
-                            <td>{product.quantity}</td>
-                            <td>{product.price}</td>
-                            <td>
-                                <div data-product-id={product.id}>
-                                    <Button
-                                        node='button'
-                                        waves='light'>
-                                        <Icon>edit</Icon>
-                                    </Button>
-                                    <Button
-                                        node='button'
-                                        waves='light'>
-                                        <Icon>delete</Icon>
-                                    </Button>
-                                </div>
-                            </td>
-                        </tr>
-                    )
-                })}
-                </tbody>
-            </Table>*/}
+            </SideNav>*/}
+			<Table>
+				<thead>
+				<tr>
+					<th data-field='id'>ID</th>
+					<th data-field='title'>Name</th>
+					<th data-field='description'>Description</th>
+					<th data-field='quantity'>Quantity</th>
+					<th data-field='price'>Price</th>
+				</tr>
+				</thead>
+				<tbody>
+				{products.map(product => {
+					return (
+						<tr>
+							<td>{product.id}</td>
+							<td>{product.title}</td>
+							<td>{product.description}</td>
+							<td>{product.quantity}</td>
+							<td>{product.price}</td>
+							<td>
+								<div data-product-id={product.id}>
+									<Button
+										onClick={(e) => {
+											this.handleProductEdit(e, product.id)
+										}}>
+										<Icon>edit</Icon>
+									</Button>
+									<Button
+										onClick={(e) => {
+											this.handleProductDelete(e, product.id)
+										}}>
+										<Icon>delete</Icon>
+									</Button>
+								</div>
+							</td>
+						</tr>
+					)
+
+				})}
+				</tbody>
+			</Table>
 		</div>
 	}
 }

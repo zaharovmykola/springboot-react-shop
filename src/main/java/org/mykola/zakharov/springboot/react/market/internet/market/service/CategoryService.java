@@ -1,6 +1,9 @@
 package org.mykola.zakharov.springboot.react.market.internet.market.service;
 
+import antlr.collections.List;
+import com.google.common.base.Optional;
 import org.mykola.zakharov.springboot.react.market.internet.market.dao.CategoryHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.ProductHibernateDAO;
 import org.mykola.zakharov.springboot.react.market.internet.market.entity.Category;
 import org.mykola.zakharov.springboot.react.market.internet.market.model.CategoryModel;
 import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
@@ -19,14 +22,17 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     @Autowired
-    private CategoryHibernateDAO dao;
+    private CategoryHibernateDAO categoryHibernateDAO;
+
+    @Autowired
+    private ProductHibernateDAO productDao;
 
     public ResponseModel create(CategoryModel categoryModel) {
         Category category =
             Category.builder()
                     .name(categoryModel.getName().trim())
                     .build();
-        dao.save(category);
+        categoryHibernateDAO.save(category);
         // Demo Logging
         System.out.println(String.format("Category %s Created", category.getName()));
         return ResponseModel.builder()
@@ -41,7 +47,7 @@ public class CategoryService {
                         .id(categoryModel.getId())
                         .name(categoryModel.getName().trim())
                         .build();
-        dao.save(category);
+        categoryHibernateDAO.save(category);
         // Demo Logging
         System.out.println(String.format("Category %s Updated", category.getName()));
         return ResponseModel.builder()
@@ -52,7 +58,7 @@ public class CategoryService {
 
     public ResponseModel getAll() {
 //        вызываем метод findAll с Sort по колонке id в обратном порядке descending
-        List<Category> categories = dao.findAll(Sort.by("id").descending());
+        List<Category> categories = categoryHibernateDAO.findAll(Sort.by("id").descending());
         List<CategoryModel> categoryModels =
             categories.stream()
             .map(c ->
@@ -69,19 +75,27 @@ public class CategoryService {
     }
 
     public ResponseModel delete(Long id) {
-        Optional<Category> categoryOptional = dao.findById(id);
+        Optional<Category> categoryOptional = categoryHibernateDAO.findById(id);
         if (categoryOptional.isPresent()){
             Category category = categoryOptional.get();
-            dao.delete(category);
-            return ResponseModel.builder()
-                .status(ResponseModel.SUCCESS_STATUS)
-                .message(String.format("Category #%s Deleted", category.getName()))
-                .build();
+            System.out.println(productDao.countProductsByCategory(category) == 0);
+            if(productDao.countProductsByCategory(category) == 0) {
+                categoryHibernateDAO.delete(category);
+                return ResponseModel.builder()
+                        .status(ResponseModel.SUCCESS_STATUS)
+                        .message(String.format("Category #%s Deleted", category.getName()))
+                        .build();
+            } else {
+                return ResponseModel.builder()
+                        .status(ResponseModel.FAIL_STATUS)
+                        .message(String.format("Can't delete the category #%s. There are some products in this category.", category.getName()))
+                        .build();
+            }
         } else {
             return ResponseModel.builder()
-                .status(ResponseModel.FAIL_STATUS)
-                .message(String.format("Category #%d Not Found", id))
-                .build();
+                    .status(ResponseModel.FAIL_STATUS)
+                    .message(String.format("Category #%d Not Found", id))
+                    .build();
         }
     }
 }

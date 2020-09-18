@@ -3,6 +3,7 @@ package org.mykola.zakharov.springboot.react.market.internet.market.dao;
 import antlr.collections.List;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
+import org.mykola.zakharov.springboot.react.market.internet.market.entity.Category;
 import org.mykola.zakharov.springboot.react.market.internet.market.entity.Product;
 import org.mykola.zakharov.springboot.react.market.internet.market.entity.QProduct;
 import org.springframework.data.domain.Sort;
@@ -45,4 +46,6 @@ public interface ProductHibernateDAO extends JpaRepository<Product, Long>,
     BigDecimal findMinimum ();
 
     Product findTop1ByOrderByPriceDesc ();
+
+    Integer countProductsByCategory(Category category);
 }

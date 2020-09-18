@@ -1,15 +1,18 @@
 import React, { Component } from 'react'
-import { withRouter } from "react-router-dom"
 import {inject, observer} from "mobx-react"
 import {Button, Icon, TextField, withStyles, WithStyles} from "@material-ui/core"
-import {CommonStore} from "app/stores/CommonStore";
-import {UserStore} from "app/stores/UserStore";
+import {CommonStore} from "../../stores/CommonStore";
+import {UserStore} from "../../stores/UserStore";
 
+// типизация для свойств компонента: унаследованное свойство classes
+// + расширяющие свойства commonStore и userStore
 interface IProps extends WithStyles<typeof styles> {
     commonStore: CommonStore,
     userStore: UserStore
 }
 
+// типизация для состояния компонента:
+// ни одного свойства состояния какого-либо типа нет
 interface IState {
 }
 
@@ -20,12 +23,12 @@ const styles = theme =>
                 margin: theme.spacing(1),
                 width: '25ch',
             },
-        },
+        }
     })
 
 @inject("commonStore", "userStore")
-@withRouter
 @observer
+// применение типизации
 class SignUp extends Component<IProps, IState> {
 
     componentWillUnmount() {
@@ -48,9 +51,10 @@ class SignUp extends Component<IProps, IState> {
     render () {
         const { loading } = this.props.commonStore
         const { userName, password } = this.props.userStore
+        const { classes } = this.props
         return (
             <form
-                className="grey lighten-2"
+                className={classes.root}
                 noValidate
                 autoComplete="off"
                 title="Register"
@@ -84,5 +88,8 @@ class SignUp extends Component<IProps, IState> {
         )
     }
 }
-
-export default withStyles(styles) (SignUp)
+// обертывание компонента в вспомогательный компонент,
+// предоставляющий через props компонента
+// свойство classes,
+// содержащее все стили, определенные в константе styles
+export default withStyles(styles)(SignUp)

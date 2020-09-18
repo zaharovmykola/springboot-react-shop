@@ -1,5 +1,6 @@
 package org.mykola.zakharov.springboot.react.market.internet.market.service;
 
+import antlr.collections.List;
 import org.mykola.zakharov.springboot.react.market.internet.market.dao.PaymentHibernateDAO;
 import org.mykola.zakharov.springboot.react.market.internet.market.entity.Payment;
 import org.mykola.zakharov.springboot.react.market.internet.market.model.PaymentModel;
@@ -8,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

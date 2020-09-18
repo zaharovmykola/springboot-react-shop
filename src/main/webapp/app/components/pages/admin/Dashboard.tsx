@@ -14,15 +14,8 @@ import {
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles'
 import {CommonStore} from "app/stores/CommonStore";
 import {UserStore} from "app/stores/UserStore";
-import {CategoryStore} from "app/stores/CategoryStore";
-import {ProductStore} from "app/stores/ProductStore";
-import ProductModel from "app/models/ProductModel";
 
 interface IProps extends WithStyles<typeof styles> {
-    commonStore: CommonStore,
-    userStore: UserStore,
-    categoryStore: CategoryStore,
-    productStore: ProductStore
 }
 
 interface IState {

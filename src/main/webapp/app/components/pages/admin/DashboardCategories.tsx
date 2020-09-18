@@ -5,17 +5,32 @@ import Category from '../../../models/CategoryModel'
 import {reaction} from 'mobx'
 import {CategoryStore} from "app/stores/CategoryStore";
 import {CommonStore} from "app/stores/CommonStore";
-import {Button, Drawer, Icon, Table, TextField} from "@material-ui/core";
+import {Button, Drawer, Icon, Table, TextField, withStyles, WithStyles} from "@material-ui/core";
 
-interface IProps {
+interface IProps extends WithStyles<typeof styles> {
 	commonStore: CommonStore,
 	categoryStore: CategoryStore
 }
 
 interface IState {
+	// режимы формы: добавить / редактировать
 	formMode: string,
+	// флаг: отображать ли сейчас панель
 	sidePanelVisibility: boolean
 }
+
+const styles = theme =>
+	({
+		title: {
+			display: 'inline',
+			marginRight: 15
+		},
+		categoriesTableColumnsHeader: {
+			'& > th': {
+				textAlign: 'left'
+			}
+		},
+	})
 
 @inject("commonStore", "categoryStore")
 @observer
@@ -46,6 +61,8 @@ class DashboardCategories extends Component<IProps, IState> {
 		) {
 			return;
 		}
+		// разрешенный способ изменения свойств состояния компонента
+		// (асинхронная отправка изменений только тех свойств состояния, которые указаны в аргументе)
 		this.setState({sidePanelVisibility: open})
 	}
 
@@ -55,17 +72,22 @@ class DashboardCategories extends Component<IProps, IState> {
 		this.props.categoryStore.setCategoryName(e.target.value)
 	}
 
+	handleCategoryAdd = (e) => {
+		this.setState({formMode: 'add'})
+		this.setState({sidePanelVisibility: true})
+	}
+
 	handleCategoryEdit = (e, categoryId) => {
 		this.setState({formMode: 'edit'})
 		this.setState({sidePanelVisibility: true})
-		/* console.log(document.getElementById('categoryFormSideNav'))
-        document.getElementById('categoryFormSideNav')
-            .style
-            .transform = 'translateX(105%)'
-        console.log(document.getElementById('categoryFormSideNav')) */
 		const currentCategory =
 			this.props.categoryStore.categories.find(c => c.id === categoryId)
 		this.props.categoryStore.setCurrentCategory(currentCategory)
+	}
+
+	handleCategoryDelete = (e, categoryId) => {
+		this.props.categoryStore.setCurrentCategoryId(categoryId)
+		this.props.categoryStore.deleteCategory()
 	}
 
 	handleSubmitForm = e => {
@@ -97,10 +119,21 @@ class DashboardCategories extends Component<IProps, IState> {
 	render () {
 		const { loading } = this.props.commonStore
 		const { categories } = this.props.categoryStore
+		const { classes } = this.props
 		/* const { currentCategory } =
             this.props.categoryStore.currentCategory */
 		return <div>
-			<h2>Categories</h2>
+			<h2 className={classes.title}>Categories</h2>
+			<Button
+				variant='outlined'
+				disabled={loading}
+				onClick={this.handleCategoryAdd}
+			>
+				Add
+				<Icon>
+					add
+				</Icon>
+			</Button>
 			<Drawer
 				open={ this.state.sidePanelVisibility } onClose={this.toggleDrawer(false)}>
 				<form>
@@ -125,57 +158,9 @@ class DashboardCategories extends Component<IProps, IState> {
 					</div>
 				</form>
 			</Drawer>
-			{/*<SideNav
-                id='categoryFormSideNav'
-                options={{
-                    onCloseStart: (e) => {
-                        console.log(e)
-                    }
-                }}
-                trigger={
-                    <Button
-                        tooltip="Add a new category"
-                        tooltipOptions={{
-                            position: 'top'
-                        }}
-                        icon={<Icon>add</Icon>}
-                    />
-                }
-            >
-                <Col
-                    s={12}
-                >
-                    <form>
-                        <Row>
-                            <Col s={12} >
-                                <TextInput
-                                    id="name"
-                                    label={'category name'}
-                                    validate
-                                    value={this.props.categoryStore.currentCategory.name}
-                                    onChange={this.handleCategoryNameChange}
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Button
-                                node="button"
-                                waves="light"
-                                disabled={loading}
-                                onClick={this.handleSubmitForm}
-                            >
-                                Submit
-                                <Icon right>
-                                    send
-                                </Icon>
-                            </Button>
-                        </Row>
-                    </form>
-                </Col>
-            </SideNav>*/}
 			<Table>
 				<thead>
-				<tr>
+				<tr className={classes.categoriesTableColumnsHeader}>
 					<th data-field="id">ID</th>
 					<th data-field="name">Name</th>
 				</tr>
@@ -194,7 +179,10 @@ class DashboardCategories extends Component<IProps, IState> {
 										}}>
 										<Icon>edit</Icon>
 									</Button>
-									<Button>
+									<Button
+										onClick={(e) => {
+											this.handleCategoryDelete(e, category.id)
+										}}>
 										<Icon>delete</Icon>
 									</Button>
 								</div>
@@ -208,4 +196,4 @@ class DashboardCategories extends Component<IProps, IState> {
 	}
 }
 
-export default DashboardCategories
+export default withStyles(styles)(DashboardCategories)

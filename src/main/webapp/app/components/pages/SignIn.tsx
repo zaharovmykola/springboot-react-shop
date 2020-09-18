@@ -2,8 +2,13 @@ import React, { Component } from 'react'
 import { withRouter } from "react-router-dom"
 import {inject, observer} from "mobx-react"
 // import { reaction } from "mobx"
-import {Button, Card, Grid, Icon, StyledProps, TextField, WithStyles, withStyles} from "@material-ui/core"
+import {Button, Card, CardContent, Grid, Icon, StyledProps, TextField, WithStyles, withStyles} from "@material-ui/core"
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+// тип CommonStore экспортируется из модуля
+// не по умолчанию,
+// поэтому здесь импортируется в фигурных скобках,
+// и его имя должно быть указано точно так же,
+// как было указано при экспорте
 import {CommonStore} from "app/stores/CommonStore";
 import {CategoryStore} from "app/stores/CategoryStore";
 import {UserStore} from "app/stores/UserStore";
@@ -23,6 +28,12 @@ const styles = theme =>
                 margin: theme.spacing(1),
                 width: '25ch',
             },
+        },
+        signInGrid: {
+            minHeight: '100vh'
+        },
+        card: {
+            width: 275
         },
     })
 
@@ -61,37 +72,59 @@ class SignIn extends Component<IProps, IState> {
         const { userName, password } = this.props.userStore
         const { classes } = this.props
         return (
-            <form className={classes.root}
-                  noValidate
-                  autoComplete="off"
-                  title="Sign In"
+            <Grid container
+                  spacing={0}
+                  direction='column'
+                  alignContent='center'
+                  justify='center'
+                  className={classes.signInGrid}
             >
-                <div>
-                    <TextField
-                        label='Login'
-                        value={userName}
-                        onChange={this.handleUserNameChange}
-                    />
-                </div>
-                <div>
-                    <TextField
-                        label='Password'
-                        value={password}
-                        onChange={this.handlePasswordChange}
-                    />
-                </div>
-                <div>
-                    <Button
-                        disabled={loading}
-                        onClick={this.handleSubmitForm}
-                    >
-                        Submit
-                        <Icon>
-                            send
-                        </Icon>
-                    </Button>
-                </div>
-            </form>
+                <Grid item
+                      xs={12}
+                      sm={12}
+                      md={3}
+                      lg={3}
+                      xl={3}
+                >
+                    <Card className={classes.card}>
+                        <CardContent>
+                            <form className={classes.root}
+                                  noValidate
+                                  autoComplete="off"
+                                  title="Sign In"
+                            >
+                                <div>
+                                    <TextField
+                                        label='Login'
+                                        value={userName}
+                                        onChange={this.handleUserNameChange}
+                                    />
+                                </div>
+                                <div>
+                                    <TextField
+                                        label='Password'
+                                        value={password}
+                                        type="password"
+                                        onChange={this.handlePasswordChange}
+                                    />
+                                </div>
+                                <div>
+                                    <Button
+                                        variant='outlined'
+                                        disabled={loading}
+                                        onClick={this.handleSubmitForm}
+                                    >
+                                        Submit
+                                        <Icon>
+                                            send
+                                        </Icon>
+                                    </Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
         )
     }
 }

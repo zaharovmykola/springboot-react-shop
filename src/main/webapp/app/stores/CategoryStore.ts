@@ -9,7 +9,7 @@ class CategoryStore {
 	private HTTP_STATUS_CREATED: number = 201
 
 	@observable currentCategory: Category = new Category()
-
+	@observable currentCategoryId: BigInteger = null
 	@observable categories: Array<Category> = []
 
 	@action setCategoryName(name: string) {
@@ -18,6 +18,10 @@ class CategoryStore {
 
 	@action setCurrentCategory(category: Category) {
 		this.currentCategory = category
+	}
+
+	@action setCurrentCategoryId(id: BigInteger) {
+		this.currentCategoryId = id
 	}
 
 	@action fetchCategories() {
@@ -100,6 +104,30 @@ class CategoryStore {
 					this.fetchCategories()
 					this.setCategoryName('')
 					this.setCurrentCategory(new Category())
+				}
+			}
+		}).catch((error) => {
+			commonStore.setError(error.message)
+			throw error
+		}).finally(action(() => {
+			commonStore.setLoading(false)
+		}))
+	}
+
+	@action deleteCategory() {
+		commonStore.clearError()
+		commonStore.setLoading(true)
+		fetch('/eCommerceShop/api/category/' + this.currentCategoryId,{
+			method: 'DELETE'
+		}).then((response) => {
+			return response.json()
+		}).then(responseModel => {
+			if (responseModel) {
+				if (responseModel.status === 'success') {
+					this.fetchCategories()
+					this.setCurrentCategoryId(null)
+				} else if (responseModel.status === 'fail') {
+					commonStore.setError(responseModel.message)
 				}
 			}
 		}).catch((error) => {
