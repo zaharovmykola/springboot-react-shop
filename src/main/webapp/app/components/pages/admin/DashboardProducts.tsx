@@ -3,15 +3,91 @@ import {inject, observer} from 'mobx-react'
 import Resizer from 'react-image-file-resizer'
 import {reaction} from "mobx"
 import Compress from "compress.js"
-import {Button, Icon, Table} from "@material-ui/core";
+import {Button, Drawer, Icon, Table, TextField, withStyles, WithStyles} from "@material-ui/core";
+import {CommonStore} from "app/stores/CommonStore";
+import {ProductStore} from "app/stores/ProductStore";
+import {CategoryStore} from "app/stores/CategoryStore";
+
+interface IProps extends WithStyles<typeof styles> {
+	commonStore: CommonStore,
+	productStore: ProductStore,
+	categoryStore: CategoryStore
+}
+
+interface IState {
+	// режимы формы: добавить / редактировать
+	formMode: string,
+	// флаг: отображать ли сейчас панель
+	sidePanelVisibility: boolean
+}
+
+const styles = theme =>
+	({
+		title: {
+			display: 'inline',
+			marginRight: 15
+		},
+		productsTableColumnsHeader: {
+			'& > th': {
+				textAlign: 'left'
+			}
+		},
+	})
 
 @inject('commonStore', 'productStore', 'categoryStore')
 @observer
-class DashboardProducts extends Component {
+class DashboardProducts extends Component<IProps, IState> {
+
+	constructor(props) {
+		super(props)
+		this.state = {
+			formMode: 'add',
+			sidePanelVisibility: false
+		}
+	}
 
 	componentDidMount() {
-		this.props.categoryStore.fetchCategories()
+		//this.props.categoryStore.fetchCategories()
 		this.props.productStore.fetchProducts()
+	}
+
+	toggleDrawer = (open: boolean) => (
+		event: React.KeyboardEvent | React.MouseEvent,
+	) => {
+		if (
+			event.type === 'keydown' &&
+			((event as React.KeyboardEvent).key === 'Tab' ||
+				(event as React.KeyboardEvent).key === 'Shift')
+		) {
+			return;
+		}
+		// разрешенный способ изменения свойств состояния компонента
+		// (асинхронная отправка изменений только тех свойств состояния, которые указаны в аргументе)
+		this.setState({sidePanelVisibility: open})
+	}
+
+	handleProductNameChange = e => {
+		// e.preventDefault()
+		// e.stopPropagation()
+		this.props.productStore.setProductName(e.target.value)
+	}
+
+	handleProductAdd = (e) => {
+		this.setState({formMode: 'add'})
+		this.setState({sidePanelVisibility: true})
+	}
+
+	handleSubmitForm = e => {
+		// предотвращаем отправку данных формы на сервер браузером
+		// и перезагрузку страницы
+		e.preventDefault()
+		this.setState({sidePanelVisibility: false})
+		if (this.state.formMode === 'add') {
+			this.props.productStore.add()
+		} else {
+			this.setState({formMode: 'add'})
+			this.props.productStore.update()
+		}
 	}
 
 	handleProductTitleChange = e => {
@@ -47,13 +123,6 @@ class DashboardProducts extends Component {
 		this.props.productStore.deleteProduct()
 	}
 
-	handleSubmitForm = e => {
-		// предотвращаем отправку данных формы на сервер браузером
-		// и перезагрузку страницы
-		e.preventDefault()
-		this.props.productStore.add()
-	}
-
 	resizeFile = (file) => new Promise(resolve => {
 		Resizer.imageFileResizer(file, 300, 300, 'JPEG', 100, 0,
 			uri => {
@@ -66,123 +135,47 @@ class DashboardProducts extends Component {
 	render() {
 		const {loading} = this.props.commonStore
 		const {products} = this.props.productStore
-		const {categories} = this.props.categoryStore
+		const { categories } = this.props.categoryStore
+		const { classes } = this.props
 		return <div>
-			<h2>Products</h2>
-			{/*<SideNav
-                id='productFormSideNav'
-                options={{
-                    draggable: true
-                }}
-                trigger={
-                    <Button
-                        tooltip='Add a new product'
-                        tooltipOptions={{
-                            position: 'top'
-                        }}
-                        icon={<Icon>add</Icon>}
-                    />
-                }
-            >
-                <Col
-                    s={12}
-                >
-                    <form>
-                        <Row>
-                            <Col s={12}>
-                                <TextInput
-                                    id='title'
-                                    label={'product title'}
-                                    validate
-                                    onChange={this.handleProductTitleChange}
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col s={12}>
-                                <TextInput
-                                    id='description'
-                                    label={'product description'}
-                                    validate
-                                    onChange={this.handleProductDescriptionChange}
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col s={12}>
-                                <Select
-                                    id='category-select'
-                                    multiple={false}
-                                    onChange={this.handleProductCategoryChange}
-                                    options={{
-                                        classes: '',
-                                        dropdownOptions: {
-                                            alignment: 'left',
-                                            autoTrigger: true,
-                                            closeOnClick: true,
-                                            constrainWidth: true,
-                                            coverTrigger: true,
-                                            hover: true,
-                                            inDuration: 150,
-                                            onCloseEnd: null,
-                                            onCloseStart: null,
-                                            onOpenEnd: null,
-                                            onOpenStart: null,
-                                            outDuration: 250
-                                        }
-                                    }}
-                                    value=''
-                                >
-                                    <option
-                                        disabled
-                                        value=''
-                                    >
-                                        Category
-                                    </option>
-                                    {categories.map(category => {
-                                        return (
-                                            <option
-                                                value={category.id}
-                                            >
-                                                {category.name}
-                                            </option>
-                                        )
-                                    })}
-                                </Select>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col s={12}>
-                                <TextInput
-                                    id="productImageInput"
-                                    label="Image"
-                                    type="file"
-                                    onChange={this.handleProductImageChange}
-                                />
-                            </Col>
-                            <Col s={12}>
-                                <img id="productImagePreview" className="responsive-img" src={this.props.productStore.currentProductImage}></img>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Button
-                                node='button'
-                                waves='light'
-                                disabled={loading}
-                                onClick={this.handleSubmitForm}
-                            >
-                                Submit
-                                <Icon right>
-                                    send
-                                </Icon>
-                            </Button>
-                        </Row>
-                    </form>
-                </Col>
-            </SideNav>*/}
+			<h2 className={classes.title}>Products</h2>
+			<Button
+				variant='outlined'
+				disabled={loading}
+				onClick={this.handleProductAdd}
+			>
+				Add
+				<Icon>
+					add
+				</Icon>
+			</Button>
+			<Drawer
+				open={ this.state.sidePanelVisibility } onClose={this.toggleDrawer(false)}>
+				<form>
+					<div>
+						<TextField
+							id="name"
+							label={'product name'}
+							value={this.props.productStore.currentProduct.title}
+							onChange={this.handleProductNameChange}
+						/>
+					</div>
+					<div>
+						<Button
+							disabled={loading}
+							onClick={this.handleSubmitForm}
+						>
+							Submit
+							<Icon>
+								send
+							</Icon>
+						</Button>
+					</div>
+				</form>
+			</Drawer>
 			<Table>
 				<thead>
-				<tr>
+				<tr className={classes.productsTableColumnsHeader}>
 					<th data-field='id'>ID</th>
 					<th data-field='title'>Name</th>
 					<th data-field='description'>Description</th>
@@ -225,4 +218,4 @@ class DashboardProducts extends Component {
 	}
 }
 
-export default DashboardProducts
+export default withStyles(styles) (DashboardProducts)
