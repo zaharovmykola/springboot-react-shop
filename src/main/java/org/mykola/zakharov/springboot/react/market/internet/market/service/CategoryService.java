@@ -1,7 +1,5 @@
 package org.mykola.zakharov.springboot.react.market.internet.market.service;
 
-import antlr.collections.List;
-import com.google.common.base.Optional;
 import org.mykola.zakharov.springboot.react.market.internet.market.dao.CategoryHibernateDAO;
 import org.mykola.zakharov.springboot.react.market.internet.market.dao.ProductHibernateDAO;
 import org.mykola.zakharov.springboot.react.market.internet.market.entity.Category;
@@ -58,7 +56,7 @@ public class CategoryService {
 
     public ResponseModel getAll() {
 //        вызываем метод findAll с Sort по колонке id в обратном порядке descending
-        List<Category> categories = categoryHibernateDAO.findAll(Sort.by("id").descending());
+        java.util.List<Category> categories = categoryHibernateDAO.findAll(Sort.by("id").descending());
         List<CategoryModel> categoryModels =
             categories.stream()
             .map(c ->

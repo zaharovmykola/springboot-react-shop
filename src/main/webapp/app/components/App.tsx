@@ -34,6 +34,9 @@ const styles = theme =>
             // атрибут класса стиля
             flexGrow: 1,
         },
+        container: {
+            maxWidth: 970
+        },
         menuButton: {
             marginRight: theme.spacing(2),
         },
@@ -115,7 +118,7 @@ class App extends Component<IProps, IState> {
                         <AppBarCollapse routes={routes} />
                     </Toolbar>
                 </AppBar>
-                <Container>
+                <Container fixed className={classes.container}>
                     {routes.map(({ path, Component }) => (
                         <Route key={path} exact path={path}>
                             {({ match }) => (

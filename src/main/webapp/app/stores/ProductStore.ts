@@ -9,12 +9,17 @@ class ProductStore {
 	private HTTP_STATUS_CREATED: number = 201
 
 	@observable currentProduct: Product = new Product()
-
-	@observable products: Array<Product> = []
-
-	@observable currentProductImage: string
-
 	@observable currentProductId: BigInteger = null
+	@observable products: Array<Product> = []
+	@observable currentProductImage: string = ''
+
+	@action setCurrentProduct(product: Product) {
+		this.currentProduct = product
+	}
+
+	@action setCurrentProductId(id: BigInteger) {
+		this.currentProductId = id
+	}
 
 	@action setProductTitle(title: string) {
 		this.currentProduct.title = title
@@ -24,52 +29,22 @@ class ProductStore {
 		this.currentProduct.categoryId = categoryId
 	}
 
-	@action setCurrentProduct(product: Product) {
-		this.currentProduct = product
-	}
-
-	@action setProductName(name: string) {
-		this.currentProduct.title = name
-	}
-
-	@action setCurrentProductId(id: BigInteger) {
-		this.currentProductId = id
-	}
-
-	@action setProductDescription(description: string){
+	@action setProductDescription(description: string) {
 		this.currentProduct.description = description
 	}
 
-	@action setProductImage(image: string){
-		this.currentProduct.image = image
+	@action setProductPrice(price: number) {
+		this.currentProduct.price = price
+	}
+
+	@action setProductQuantity(quantity: number) {
+		this.currentProduct.quantity = quantity
+	}
+
+	@action setProductImage(image: string) {
 		this.currentProductImage = image
+		this.currentProduct.image = image
 	}
-	// пробую с екшн
-	///////////////////////////////////////////////////////////////
-	@action deleteProduct() {
-		commonStore.clearError()
-		commonStore.setLoading(true)
-		fetch('/eCommerceShop/api/products/' + this.currentProductId,{
-			method: 'DELETE'
-		}).then((response) => {
-			return response.json()
-		}).then(responseModel => {
-			if (responseModel) {
-				if (responseModel.status === 'success') {
-					this.fetchProducts()
-					this.setCurrentProductId(null)
-				} else if (responseModel.status === 'fail') {
-					commonStore.setError(responseModel.message)
-				}
-			}
-		}).catch((error) => {
-			commonStore.setError(error.message)
-			throw error
-		}).finally(action(() => {
-			commonStore.setLoading(false)
-		}))
-	}
-	///////////////////////////////////////////////////////////////
 
 	@action fetchProducts() {
 		commonStore.clearError()
@@ -106,7 +81,7 @@ class ProductStore {
 		}))
 	}
 
-	@action add () {
+	@action add() {
 		commonStore.clearError()
 		commonStore.setLoading(true)
 		fetch('/eCommerceShop/api/products', {
@@ -118,8 +93,10 @@ class ProductStore {
 			body: JSON.stringify({
 				'title': encodeURIComponent(this.currentProduct.title),
 				'description': encodeURIComponent(this.currentProduct.description),
-				'categoryId': this.currentProduct.categoryId,
-				'image': this.currentProduct.image
+				'price': this.currentProduct.price,
+				'quantity': this.currentProduct.quantity,
+				'image': this.currentProduct.image,
+				'categoryId': this.currentProduct.categoryId
 			})
 		}).then((response) => {
 			return response.status
@@ -127,7 +104,7 @@ class ProductStore {
 			if (responseStatusCode) {
 				if (responseStatusCode === this.HTTP_STATUS_CREATED) {
 					this.fetchProducts()
-					this.setProductTitle('')
+					this.setCurrentProduct(new Product())
 				}
 			}
 		}).catch((error) => {
@@ -147,7 +124,14 @@ class ProductStore {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json'
 			},
-			body: JSON.stringify({'name': encodeURIComponent(this.currentProduct.title)})
+			body: JSON.stringify({
+				'title': encodeURIComponent(this.currentProduct.title),
+				'description': encodeURIComponent(this.currentProduct.description),
+				'price': this.currentProduct.price,
+				'quantity': this.currentProduct.quantity,
+				'image': this.currentProduct.image,
+				'categoryId': this.currentProduct.categoryId
+			})
 		}).then((response) => {
 			return response.status
 		}).then(responseStatusCode => {
@@ -166,6 +150,29 @@ class ProductStore {
 		}))
 	}
 
+	@action deleteProduct() {
+		commonStore.clearError()
+		commonStore.setLoading(true)
+		fetch('/eCommerceShop/api/products/' + this.currentProductId,{
+			method: 'DELETE'
+		}).then((response) => {
+			return response.json()
+		}).then(responseModel => {
+			if (responseModel) {
+				if (responseModel.status === 'success') {
+					this.fetchProducts()
+					this.setCurrentProductId(null)
+				} else if (responseModel.status === 'fail') {
+					commonStore.setError(responseModel.message)
+				}
+			}
+		}).catch((error) => {
+			commonStore.setError(error.message)
+			throw error
+		}).finally(action(() => {
+			commonStore.setLoading(false)
+		}))
+	}
 }
 export {ProductStore}
 export default new ProductStore()

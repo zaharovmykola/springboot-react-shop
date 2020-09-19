@@ -103,25 +103,10 @@ class DashboardCategories extends Component<IProps, IState> {
 		}
 	}
 
-	/* currentCategoryChanged = reaction(
-        () => this.props.categoryStore.currentCategory.name,
-        (currentCategoryName) => {
-            console.log(currentCategoryName)
-            M.updateTextFields()
-            console.log(document.getElementById('categoryFormSideNav'))
-            document.getElementById('categoryFormSideNav')
-                .style
-                .transform = 'translateX(105%)'
-            console.log(document.getElementById('categoryFormSideNav'))
-        }
-    ) */
-
 	render () {
 		const { loading } = this.props.commonStore
 		const { categories } = this.props.categoryStore
 		const { classes } = this.props
-		/* const { currentCategory } =
-            this.props.categoryStore.currentCategory */
 		return <div>
 			<h2 className={classes.title}>Categories</h2>
 			<Button
