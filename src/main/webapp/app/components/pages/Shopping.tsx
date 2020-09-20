@@ -12,9 +12,9 @@ import {
     WithStyles
 } from "@material-ui/core";
 import {inject, observer} from "mobx-react";
-import {CommonStore} from "../../stores/CommonStore";
-import {ProductStore} from "../../stores/ProductStore";
-import {CategoryStore} from "../../stores/CategoryStore";
+import {CommonStore} from "../../../stores/CommonStore";
+import {ProductStore} from "../../../stores/ProductStore";
+import {CategoryStore} from "../../../stores/CategoryStore";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 interface IProps extends WithStyles<typeof styles> {
@@ -45,7 +45,7 @@ const styles = theme =>
         heading: {
             fontSize: theme.typography.pxToRem(15),
             fontWeight: theme.typography.fontWeightRegular,
-        },
+        }
     })
 
 @inject('commonStore', 'productStore', 'categoryStore')
@@ -81,9 +81,15 @@ class Shopping extends Component<IProps, IState> {
         this.setState({sidePanelVisibility: true})
     }
 
+    //TRY WITH PRODUCT FILTER BY CATEGORY
+    handleFilterByCategory = (e) => {
+        this.props.productStore.filterProductsByCategory()
+    }
+
     render () {
         const {loading} = this.props.commonStore
         const { products } = this.props.productStore
+        const {categories} = this.props.categoryStore
         const { classes } = this.props
         return <div>
             {/* drawer toggle button */}
@@ -99,23 +105,42 @@ class Shopping extends Component<IProps, IState> {
                 </Icon>
             </Button>
             {/* drawer */}
+
+
             <Drawer
                 open={ this.state.sidePanelVisibility } onClose={this.toggleDrawer(false)}>
+                // LETS TRY WITH BY CATEGORIES
                 <Accordion>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel2a-content"
                         id="panel2a-header"
                     >
-                        <Typography className={classes.heading}>By category</Typography>
+                        <Typography
+                            className={classes.heading}
+                        >By category</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                            sit amet blandit leo lobortis eget.
+
+                                <InputLabel id="category-label"></InputLabel>
+                                <Select
+                                    id="category"
+                                    labelId='category-label'
+                                    value={this.props.productStore.currentProduct.categoryId}
+                                    onChange={this.handleFilterByCategory}
+                                >
+                                    {categories.map(category => {
+                                        console.log(category.name)
+                                        return (
+                                            <MenuItem value={category.id}>{category.name}</MenuItem>
+                                        )})}
+                                </Select>
+
                         </Typography>
                     </AccordionDetails>
                 </Accordion>
+
                 <Accordion>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
@@ -126,8 +151,7 @@ class Shopping extends Component<IProps, IState> {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                            sit amet blandit leo lobortis eget.
+
                         </Typography>
                     </AccordionDetails>
                 </Accordion>
@@ -141,8 +165,7 @@ class Shopping extends Component<IProps, IState> {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                            sit amet blandit leo lobortis eget.
+
                         </Typography>
                     </AccordionDetails>
                 </Accordion>
@@ -156,8 +179,7 @@ class Shopping extends Component<IProps, IState> {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                            sit amet blandit leo lobortis eget.
+
                         </Typography>
                     </AccordionDetails>
                 </Accordion>
@@ -171,8 +193,7 @@ class Shopping extends Component<IProps, IState> {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                            sit amet blandit leo lobortis eget.
+
                         </Typography>
                     </AccordionDetails>
                 </Accordion>
@@ -186,14 +207,15 @@ class Shopping extends Component<IProps, IState> {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                            sit amet blandit leo lobortis eget.
+
                         </Typography>
                     </AccordionDetails>
                 </Accordion>
                 {/*<form className={classes.form}>
                 </form>*/}
             </Drawer>
+
+
             <Grid container>
                 {products.map(product => {
                     return (

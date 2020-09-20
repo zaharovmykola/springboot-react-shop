@@ -12,6 +12,7 @@ class ProductStore {
 	@observable currentProductId: BigInteger = null
 	@observable products: Array<Product> = []
 	@observable currentProductImage: string = ''
+	@observable currentCategoryId: BigInteger = null
 
 	@action setCurrentProduct(product: Product) {
 		this.currentProduct = product
@@ -44,6 +45,10 @@ class ProductStore {
 	@action setProductImage(image: string) {
 		this.currentProductImage = image
 		this.currentProduct.image = image
+	}
+
+	@action setCurrentCategoryId(id: BigInteger) {
+		this.currentCategoryId = id
 	}
 
 	@action fetchProducts() {
@@ -162,6 +167,29 @@ class ProductStore {
 				if (responseModel.status === 'success') {
 					this.fetchProducts()
 					this.setCurrentProductId(null)
+				} else if (responseModel.status === 'fail') {
+					commonStore.setError(responseModel.message)
+				}
+			}
+		}).catch((error) => {
+			commonStore.setError(error.message)
+			throw error
+		}).finally(action(() => {
+			commonStore.setLoading(false)
+		}))
+	}
+	@action filterProductsByCategory() {
+		commonStore.clearError()
+		commonStore.setLoading(true)
+		fetch(`/eCommerceShop/api/categories/${this.currentCategoryId}/products::orderBy:title::sortingDirection:DESC`, {
+			method: 'GET'
+		}).then((response) => {
+			return response.json()
+		}).then(responseModel => {
+			if (responseModel) {
+				if (responseModel.status === 'success') {
+					this.fetchProducts()
+					this.setCurrentCategoryId(null)
 				} else if (responseModel.status === 'fail') {
 					commonStore.setError(responseModel.message)
 				}
