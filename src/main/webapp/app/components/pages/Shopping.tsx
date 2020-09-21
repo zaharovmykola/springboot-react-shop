@@ -12,9 +12,9 @@ import {
     WithStyles
 } from "@material-ui/core";
 import {inject, observer} from "mobx-react";
-import {CommonStore} from "../../../stores/CommonStore";
-import {ProductStore} from "../../../stores/ProductStore";
-import {CategoryStore} from "../../../stores/CategoryStore";
+import {CommonStore} from "../../stores/CommonStore";
+import {ProductStore} from "../../stores/ProductStore";
+import {CategoryStore} from "../../stores/CategoryStore";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 interface IProps extends WithStyles<typeof styles> {
@@ -45,6 +45,10 @@ const styles = theme =>
         heading: {
             fontSize: theme.typography.pxToRem(15),
             fontWeight: theme.typography.fontWeightRegular,
+        },
+        formControl: {
+            margin: theme.spacing(1),
+            display: 'block'
         }
     })
 
@@ -109,7 +113,23 @@ class Shopping extends Component<IProps, IState> {
 
             <Drawer
                 open={ this.state.sidePanelVisibility } onClose={this.toggleDrawer(false)}>
-                // LETS TRY WITH BY CATEGORIES
+
+                <FormControl className={classes.formControl}>
+                    <InputLabel id="category-label">  By category</InputLabel>
+                    <Select
+                        id="category"
+                        labelId='category-label'
+                        value={this.props.productStore.currentProduct.categoryId}
+                        onChange={this.handleFilterByCategory}
+                    >
+                        {categories.map(category => {
+                            console.log(category.name)
+                            return (
+                                <MenuItem value={category.id}>{category.name}</MenuItem>
+                            )})}
+                    </Select>
+                </FormControl>
+
                 <Accordion>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
@@ -122,20 +142,6 @@ class Shopping extends Component<IProps, IState> {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-
-                                <InputLabel id="category-label"></InputLabel>
-                                <Select
-                                    id="category"
-                                    labelId='category-label'
-                                    value={this.props.productStore.currentProduct.categoryId}
-                                    onChange={this.handleFilterByCategory}
-                                >
-                                    {categories.map(category => {
-                                        console.log(category.name)
-                                        return (
-                                            <MenuItem value={category.id}>{category.name}</MenuItem>
-                                        )})}
-                                </Select>
 
                         </Typography>
                     </AccordionDetails>
