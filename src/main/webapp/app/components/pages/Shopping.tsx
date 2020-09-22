@@ -5,7 +5,7 @@ import {
     Card,
     CardActionArea, CardActions,
     CardContent,
-    CardMedia, Drawer, FormControl,
+    CardMedia, Checkbox, Drawer, FormControl, FormControlLabel, FormGroup,
     Grid,
     Icon, InputLabel, MenuItem, Select, TextField,
     Typography, withStyles,
@@ -42,14 +42,17 @@ const styles = theme =>
             zIndex: 999,
             backgroundColor: '#ee6e73'
         },
+        drawer: {
+            width: 300
+        },
         heading: {
             fontSize: theme.typography.pxToRem(15),
-            fontWeight: theme.typography.fontWeightRegular,
+            fontWeight: theme.typography.fontWeightBold,
+            subHeading: {
+                fontWeight: theme.typography.fontWeightRegular,
+            },
         },
-        formControl: {
-            margin: theme.spacing(1),
-            display: 'block'
-        }
+
     })
 
 @inject('commonStore', 'productStore', 'categoryStore')
@@ -64,8 +67,14 @@ class Shopping extends Component<IProps, IState> {
     }
 
     componentDidMount() {
-        // this.props.categoryStore.fetchCategories()
+        // сразу после монтирования компонента в виртуальный DOM
+        // просим у локальных хранилищ загрузить
+        // списки моделей товаров и категорий
+        this.props.categoryStore.fetchCategories()
         this.props.productStore.fetchProducts()
+        // TODO когда значения границ в локальном хранилище будут получены с сервера -
+        // скопировать их в свойства хранилища - priceFrom и priceTo
+        this.props.productStore.fetchProductPriceBounds()
     }
 
     toggleDrawer = (open: boolean) => (
@@ -85,15 +94,25 @@ class Shopping extends Component<IProps, IState> {
         this.setState({sidePanelVisibility: true})
     }
 
-    //TRY WITH PRODUCT FILTER BY CATEGORY
-    handleFilterByCategory = (e) => {
-        this.props.productStore.filterProductsByCategory()
+    // обработчик события "изменение состояния любого из чекбоксов фильтра категорий"
+    handleCategoriesFilter = (e, categoryId) => {
+        // в хранилище передаем идентификатор категории, значение чекбокса которой
+        // изменилось, и само значение (выбран или не выбран)
+        this.props.productStore.setFilerDataCategory(categoryId, e.target.checked)
+    }
+
+    handlePriceFromChange = e => {
+        this.props.productStore.setFilterDataPriceFrom(e.target.value)
+    }
+
+    handlePriceToChange = e => {
+        this.props.productStore.setFilterDataPriceTo(e.target.value)
     }
 
     render () {
         const {loading} = this.props.commonStore
         const { products } = this.props.productStore
-        const {categories} = this.props.categoryStore
+        const { categories } = this.props.categoryStore
         const { classes } = this.props
         return <div>
             {/* drawer toggle button */}
@@ -109,56 +128,39 @@ class Shopping extends Component<IProps, IState> {
                 </Icon>
             </Button>
             {/* drawer */}
-
-
             <Drawer
-                open={ this.state.sidePanelVisibility } onClose={this.toggleDrawer(false)}>
-
-                <FormControl className={classes.formControl}>
-                    <InputLabel id="category-label">  By category</InputLabel>
-                    <Select
-                        id="category"
-                        labelId='category-label'
-                        value={this.props.productStore.currentProduct.categoryId}
-                        onChange={this.handleFilterByCategory}
-                    >
-                        {categories.map(category => {
-                            console.log(category.name)
-                            return (
-                                <MenuItem value={category.id}>{category.name}</MenuItem>
-                            )})}
-                    </Select>
-                </FormControl>
-
+                open={ this.state.sidePanelVisibility }
+                onClose={this.toggleDrawer(false)}
+                className={classes.drawer}
+            >
                 <Accordion>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel2a-content"
                         id="panel2a-header"
                     >
-                        <Typography
-                            className={classes.heading}
-                        >By category</Typography>
+                        <Icon>list</Icon>
+                        <Typography className={classes.heading}>
+                            Categories
+                        </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Typography>
-
-                        </Typography>
-                    </AccordionDetails>
-                </Accordion>
-
-                <Accordion>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel2a-content"
-                        id="panel2a-header"
-                    >
-                        <Typography className={classes.heading}>By price from ... to ...</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography>
-
-                        </Typography>
+                        <FormGroup row>
+                            {categories.map(category => {
+                                return (
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                name={'c' + category.id}
+                                                data-category-id={category.id}
+                                                checked={!!this.props.productStore.categories.find(categoryId => categoryId === category.id)}
+                                                onClick={(e) => {
+                                                    this.handleCategoriesFilter(e, category.id)
+                                                }}/>
+                                        }
+                                        label={category.name} />
+                                )})}
+                        </FormGroup>
                     </AccordionDetails>
                 </Accordion>
                 <Accordion>
@@ -167,12 +169,33 @@ class Shopping extends Component<IProps, IState> {
                         aria-controls="panel2a-content"
                         id="panel2a-header"
                     >
-                        <Typography className={classes.heading}>Expensive first</Typography>
+                        <Icon>filter</Icon>
+                        <Typography className={classes.heading}>
+                            Filter
+                        </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Typography>
-
-                        </Typography>
+                        <FormGroup row>
+                            <div>
+                                <Typography className={classes.subHeading}>
+                                    Price Range
+                                </Typography>
+                            </div>
+                            <div>
+                                <TextField
+                                    id="priceFrom"
+                                    label={'from'}
+                                    value={this.props.productStore.priceFrom}
+                                    onChange={this.handlePriceFromChange}
+                                />
+                                <TextField
+                                    id="priceTo"
+                                    label={'to'}
+                                    value={this.props.productStore.priceTo}
+                                    onChange={this.handlePriceToChange}
+                                />
+                            </div>
+                        </FormGroup>
                     </AccordionDetails>
                 </Accordion>
                 <Accordion>
@@ -181,47 +204,18 @@ class Shopping extends Component<IProps, IState> {
                         aria-controls="panel2a-content"
                         id="panel2a-header"
                     >
-                        <Typography className={classes.heading}>Cheap first</Typography>
+                        <Typography className={classes.heading}>Accordion 3</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-
-                        </Typography>
-                    </AccordionDetails>
-                </Accordion>
-                <Accordion>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel2a-content"
-                        id="panel2a-header"
-                    >
-                        <Typography className={classes.heading}>New first</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography>
-
-                        </Typography>
-                    </AccordionDetails>
-                </Accordion>
-                <Accordion>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel2a-content"
-                        id="panel2a-header"
-                    >
-                        <Typography className={classes.heading}>Old first</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography>
-
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
+                            sit amet blandit leo lobortis eget.
                         </Typography>
                     </AccordionDetails>
                 </Accordion>
                 {/*<form className={classes.form}>
                 </form>*/}
             </Drawer>
-
-
             <Grid container>
                 {products.map(product => {
                     return (
