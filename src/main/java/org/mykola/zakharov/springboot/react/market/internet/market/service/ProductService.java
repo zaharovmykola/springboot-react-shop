@@ -228,4 +228,17 @@ public class ProductService {
                 .data(maxndMin)
                 .build();
     }
+
+    /////////////////////////////////////////////////////
+    public ResponseModel getProductsQuantityBounds() {
+        Map<String, Integer> maxndMin = new LinkedHashMap<>();
+        maxndMin.put("min", productDao.findTop1ByOrderByQuantityAsc().getQuantity());
+        maxndMin.put("max", productDao.findTop1ByOrderByQuantityDesc().getQuantity());
+        return ResponseModel.builder()
+                .status(ResponseModel.SUCCESS_STATUS)
+                .data(maxndMin)
+                .build();
+    }
+    ///////////////////////////////////////////////////////
+
 }

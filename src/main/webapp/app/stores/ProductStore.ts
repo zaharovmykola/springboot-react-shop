@@ -17,14 +17,27 @@ class ProductStore {
 	@observable sortingDirection: string = 'DESC'
 	@observable priceFrom: number = null
 	@observable priceTo: number = null
+
+	////////////////////////////////////////
+	@observable quantityFrom: number = null
+	@observable quantityTo: number = null
+	/////////////////////////////////////////
+
 	@observable categories: Array<number> = []
 
 	@observable priceFromBound: number = 0
 	@observable priceToBound: number = 1000000
 
+	///////////////////////////////////////////
+	@observable quantityFromBound: number = 0
+	@observable quantityToBound: number = 1000000
 	@computed get isFilterDataPresent () {
-		return (this.orderBy && this.sortingDirection) || (this.priceFrom && this.priceTo) || this.categories.length > 0
+		return (this.orderBy && this.sortingDirection)
+					|| (this.priceFrom && this.priceTo)
+					|| (this.quantityFrom && this.quantityTo)
+					|| this.categories.length > 0
 	}
+	//////////////////////////////////////////////
 
 	@action setCurrentProduct(product: Product) {
 		this.currentProduct = product
@@ -72,6 +85,21 @@ class ProductStore {
 			this.getFilteredProducts()
 		}
 	}
+
+	//////////////////////////////////////////////////////////
+	@action setFilterDataQuantityFrom(quantityFrom: number) {
+		this.quantityFrom = quantityFrom
+		if (this.quantityFrom && this.quantityTo) {
+			this.getFilteredProducts()
+		}
+	}
+	@action setFilterDataQuantityTo(quantityTo: number) {
+		this.quantityTo = quantityTo
+		if (this.quantityFrom && this.quantityTo) {
+			this.getFilteredProducts()
+		}
+	}
+	////////////////////////////////////////////////////////////
 
 	// установка содержимого списка идентификаторов категорий
 	// для фильтра
@@ -231,6 +259,7 @@ class ProductStore {
 		commonStore.clearError()
 		commonStore.setLoading(true)
 
+		////////////////////////////////////////////////////////////////////////////////
 		// составление строки запроса к действию контроллера,
 		// возвращающему отфильтрованный отсортированный список моделей товаров
 		const filteredProductsUrl =
@@ -238,9 +267,12 @@ class ProductStore {
                         ::orderBy:${this.orderBy}
                         ::sortingDirection:${this.sortingDirection}
                         /?search=
-                            price>:${this.priceFrom};
+                            price>:${this.priceFrom}
                             price<:${this.priceTo}
+                            quantity>:${this.quantityFrom}
+                            quantity<:${this.quantityTo}
                             ${(this.categories && this.categories.length > 0) ? ';category:' + JSON.stringify(this.categories) : ''}`
+		/////////////////////////////////////////////////////////////////////////////////
 
 		console.log(filteredProductsUrl)
 		// перед запросом на сервер удаляем все пробельные символы из адреса,
@@ -294,6 +326,33 @@ class ProductStore {
 			commonStore.setLoading(false)
 		}))
 	}
+
+	///////////////////////////////////////////////////////////////////
+	@action fetchProductQuantityBounds () {
+		commonStore.clearError()
+		commonStore.setLoading(true)
+		fetch('/eCommerceShop/api/products/quantity-bounds', {
+			method: 'GET'
+		}).then((response) => {
+			return response.json()
+		}).then(responseModel => {
+			if (responseModel) {
+				if (responseModel.status === 'success') {
+					this.quantityFromBound = responseModel.data.min
+					this.quantityToBound = responseModel.data.max
+				} else if (responseModel.status === 'fail') {
+					commonStore.setError(responseModel.message)
+				}
+			}
+		}).catch((error) => {
+			commonStore.setError(error.message)
+			throw error
+		}).finally(action(() => {
+			commonStore.setLoading(false)
+		}))
+	}
+	////////////////////////////////////////////////////////////////////
+
 }
 export {ProductStore}
 export default new ProductStore()

@@ -75,6 +75,7 @@ class Shopping extends Component<IProps, IState> {
         // TODO когда значения границ в локальном хранилище будут получены с сервера -
         // скопировать их в свойства хранилища - priceFrom и priceTo
         this.props.productStore.fetchProductPriceBounds()
+        this.props.productStore.fetchProductQuantityBounds()
     }
 
     toggleDrawer = (open: boolean) => (
@@ -108,6 +109,15 @@ class Shopping extends Component<IProps, IState> {
     handlePriceToChange = e => {
         this.props.productStore.setFilterDataPriceTo(e.target.value)
     }
+
+    ///////////////////////////////////////////////////////////////////////
+    handleQuantityFromChange = e => {
+        this.props.productStore.setFilterDataQuantityFrom(e.target.value)
+    }
+    handleQuantityToChange = e => {
+        this.props.productStore.setFilterDataQuantityTo(e.target.value)
+    }
+    /////////////////////////////////////////////////////////////////////////
 
     render () {
         const {loading} = this.props.commonStore
@@ -197,6 +207,29 @@ class Shopping extends Component<IProps, IState> {
                             </div>
                         </FormGroup>
                     </AccordionDetails>
+                    <AccordionDetails>
+                        <FormGroup row>
+                            <div>
+                                <Typography className={classes.subHeading}>
+                                    Quantity Range
+                                </Typography>
+                            </div>
+                            <div>
+                                <TextField
+                                    id="quantityFrom"
+                                    label={'from'}
+                                    value={this.props.productStore.quantityFrom}
+                                    onChange={this.handleQuantityFromChange}
+                                />
+                                <TextField
+                                    id="quantityTo"
+                                    label={'to'}
+                                    value={this.props.productStore.quantityTo}
+                                    onChange={this.handleQuantityToChange}
+                                />
+                            </div>
+                        </FormGroup>
+                    </AccordionDetails>
                 </Accordion>
                 <Accordion>
                     <AccordionSummary
@@ -204,7 +237,7 @@ class Shopping extends Component<IProps, IState> {
                         aria-controls="panel2a-content"
                         id="panel2a-header"
                     >
-                        <Typography className={classes.heading}>Accordion 3</Typography>
+                        <Typography className={classes.heading}>Sort</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>

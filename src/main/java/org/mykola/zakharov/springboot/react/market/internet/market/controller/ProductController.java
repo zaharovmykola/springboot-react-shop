@@ -86,4 +86,15 @@ public class ProductController {
                 HttpStatus.OK
         );
     }
+
+    //////////////////////////////////////////////////////////////
+    @GetMapping("/products/quantity-bounds")
+    public ResponseEntity<ResponseModel> getProductsQuantityBounds() {
+        return new ResponseEntity<>(
+                service.getProductsQuantityBounds(),
+                HttpStatus.OK
+        );
+    }
+    ////////////////////////////////////////////////////////////////
+
 }
