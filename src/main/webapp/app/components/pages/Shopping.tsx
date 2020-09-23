@@ -52,7 +52,9 @@ const styles = theme =>
                 fontWeight: theme.typography.fontWeightRegular,
             },
         },
-
+        buttonsort: {
+            margin: 5
+        }
     })
 
 @inject('commonStore', 'productStore', 'categoryStore')
@@ -117,6 +119,18 @@ class Shopping extends Component<IProps, IState> {
     handleQuantityToChange = e => {
         this.props.productStore.setFilterDataQuantityTo(e.target.value)
     }
+    handleNewFirstFilter = e => {
+        this.props.productStore.getSortedProductsByPriceOrNovelty('DECS', 'id')
+    }
+    handleOldFirstFilter = e => {
+        this.props.productStore.getSortedProductsByPriceOrNovelty('ASC', 'id')
+    }
+    handleCheepFirstFilter = e => {
+        this.props.productStore.getSortedProductsByPriceOrNovelty('ASC', 'price')
+    }
+    handleExpensiveFirstFilter = e => {
+        this.props.productStore.getSortedProductsByPriceOrNovelty('DESC', 'price')
+    }
 
     /////////////////////////////////////////////////////////////////////////
 
@@ -169,7 +183,8 @@ class Shopping extends Component<IProps, IState> {
                                                     this.handleCategoriesFilter(e, category.id)
                                                 }}/>
                                         }
-                                        label={category.name}/>
+                                        label={category.name}
+                                        labelPlacement="bottom"/>
                                 )
                             })}
                         </FormGroup>
@@ -190,7 +205,7 @@ class Shopping extends Component<IProps, IState> {
                         <FormGroup row>
                             <div>
                                 <Typography className={classes.subHeading}>
-                                    Price Range
+                                    Price
                                 </Typography>
                             </div>
                             <div>
@@ -213,7 +228,7 @@ class Shopping extends Component<IProps, IState> {
                         <FormGroup row>
                             <div>
                                 <Typography className={classes.subHeading}>
-                                    Quantity Range
+                                    Quantity
                                 </Typography>
                             </div>
                             <div>
@@ -241,47 +256,53 @@ class Shopping extends Component<IProps, IState> {
                         aria-controls="panel2a-content"
                         id="panel2a-header"
                     >
-                        <Typography className={classes.heading}>Sort</Typography>
+                        <Icon>sort</Icon>
+                        <Typography className={classes.heading}>
+                            Sort
+                        </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <FormGroup row>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        name={'New first'}
-                                        data-newFirst-id={'New first'}
-                                        onClick={(e) => {
-                                            this.handleNewFirstFilter()
-                                        }}/>}
-                                label={'New first'}/>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        name={'Old first'}
-                                        data-newFirst-id={'Old first'}
-                                        onClick={(e) => {
-                                            this.handleOldFirstFilter()
-                                        }}/>}
-                                label={'Old first'}/>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        name={'Cheep first'}
-                                        data-newFirst-id={'Cheep first'}
-                                        onClick={(e) => {
-                                            this.handleCheepFirstFilter()
-                                        }}/>}
-                                label={'Cheep first'}/>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        name={'Expensive first'}
-                                        data-newFirst-id={'Expensive first'}
-                                        onClick={(e) => {
-                                            this.handleExpensiveFirstFilter()
-                                        }}/>}
-                                label={'Expensive first'}/>
-                        </FormGroup>
+
+                                <Button
+                                    className={classes.buttonsort}
+                                    variant="outlined"
+                                    onClick={(e) => {
+                                        this.handleNewFirstFilter(e)
+                                    }}
+                                >
+                                    New
+                                </Button>
+
+                                <Button
+                                    className={classes.buttonsort}
+                                    variant="outlined"
+                                    onClick={(e) => {
+                                        this.handleOldFirstFilter(e)
+                                    }}
+                                >
+                                    Old
+                                </Button>
+
+                                <Button
+                                    className={classes.buttonsort}
+                                    variant="outlined"
+                                    onClick={(e) => {
+                                        this.handleCheepFirstFilter(e)
+                                    }}
+                                >
+                                    Cheep
+                                </Button>
+
+                                <Button
+                                    className={classes.buttonsort}
+                                    variant="outlined"
+                                    onClick={(e) => {
+                                        this.handleExpensiveFirstFilter(e)
+                                    }}
+                                >
+                                    Expensive
+                                </Button>
+
                     </AccordionDetails>
                 </Accordion>
 

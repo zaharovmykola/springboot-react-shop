@@ -375,7 +375,43 @@ class ProductStore {
             commonStore.setLoading(false)
         }))
     }
-
+    @action getSortedProductsByPriceOrNovelty(direction: string, orderByField: string) {
+        commonStore.clearError()
+        commonStore.setLoading(true)
+        // составление строки запроса к действию контроллера,
+        // возвращающему отфильтрованный отсортированный список моделей товаров
+        const filteredProductsUrl =
+            `api/products/filtered
+                        ::orderBy:${orderByField}
+                        ::sortingDirection:${direction}`
+        console.log(filteredProductsUrl)
+        // перед запросом на сервер удаляем все пробельные символы из адреса,
+        // потому что описанный выше блок кода добавляет их для форматирования
+        fetch(filteredProductsUrl.replace(/\s/g, ''), {
+            method: 'GET'
+        }).then((response) => {
+            return response.json()
+        }).then(responseModel => {
+            if (responseModel) {
+                if (responseModel.status === 'success') {
+                    this.products =
+                        JSON.parse(
+                            decodeURIComponent(
+                                JSON.stringify(responseModel.data)
+                                    .replace(/(%2E)/ig, '%20')
+                            )
+                        )
+                } else if (responseModel.status === 'fail') {
+                    commonStore.setError(responseModel.message)
+                }
+            }
+        }).catch((error) => {
+            commonStore.setError(error.message)
+            throw error
+        }).finally(action(() => {
+            commonStore.setLoading(false)
+        }))
+    }
     ////////////////////////////////////////////////////////////////////
 
 }
