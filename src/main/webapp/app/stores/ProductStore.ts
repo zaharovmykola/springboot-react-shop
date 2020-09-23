@@ -74,6 +74,10 @@ class ProductStore {
 
 	@action setFilterDataPriceFrom(priceFrom: number) {
 		this.priceFrom = priceFrom
+		if (this.priceFrom == 0 || this.priceFrom == null) {
+			this.fetchProductPriceBounds()
+			this.priceFrom = this.priceFromBound
+		}
 		if (this.priceFrom && this.priceTo) {
 			this.getFilteredProducts()
 		}
@@ -81,6 +85,10 @@ class ProductStore {
 
 	@action setFilterDataPriceTo(priceTo: number) {
 		this.priceTo = priceTo
+		if (this.priceTo == 0 || this.priceTo == null) {
+			this.fetchProductPriceBounds()
+			this.priceTo = this.priceToBound
+		}
 		if (this.priceFrom && this.priceTo) {
 			this.getFilteredProducts()
 		}
@@ -89,12 +97,20 @@ class ProductStore {
 	//////////////////////////////////////////////////////////
 	@action setFilterDataQuantityFrom(quantityFrom: number) {
 		this.quantityFrom = quantityFrom
+		if (this.quantityFrom == 0 || this.quantityFrom == null) {
+			this.fetchProductQuantityBounds()
+			this.quantityFrom = this.quantityFromBound
+		}
 		if (this.quantityFrom && this.quantityTo) {
 			this.getFilteredProducts()
 		}
 	}
 	@action setFilterDataQuantityTo(quantityTo: number) {
 		this.quantityTo = quantityTo
+		if (this.quantityTo == 0 || this.quantityTo == null) {
+			this.fetchProductQuantityBounds()
+			this.quantityTo = this.quantityToBound
+		}
 		if (this.quantityFrom && this.quantityTo) {
 			this.getFilteredProducts()
 		}
