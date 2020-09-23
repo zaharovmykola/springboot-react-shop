@@ -78,7 +78,7 @@ class ProductStore {
         this.priceFrom = priceFrom
         if (this.priceFrom == 0 || this.priceFrom == null) {
             this.fetchProductPriceBounds()
-            Thread.sleep(5000)
+            Thread.sleep(3000)
             this.priceFrom = this.priceFromBound
         }
         if (this.priceFrom && this.priceTo) {
@@ -90,7 +90,7 @@ class ProductStore {
         this.priceTo = priceTo
         if (this.priceTo == 0 || this.priceTo == null) {
             this.fetchProductPriceBounds()
-            Thread.sleep(5000)
+            Thread.sleep(3000)
             this.priceTo = this.priceToBound
         }
         if (this.priceFrom && this.priceTo) {
@@ -103,7 +103,7 @@ class ProductStore {
         this.quantityFrom = quantityFrom
         if (this.quantityFrom == 0 || this.quantityFrom == null) {
             this.fetchProductQuantityBounds()
-            Thread.sleep(5000)
+            Thread.sleep(3000)
             this.quantityFrom = this.quantityFromBound
         }
         if (this.quantityFrom && this.quantityTo) {
@@ -115,7 +115,7 @@ class ProductStore {
         this.quantityTo = quantityTo
         if (this.quantityTo == 0 || this.quantityTo == null) {
             this.fetchProductQuantityBounds()
-            Thread.sleep(5000)
+            Thread.sleep(3000)
             this.quantityTo = this.quantityToBound
         }
         if (this.quantityFrom && this.quantityTo) {

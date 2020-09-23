@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import {
     Accordion, AccordionDetails, AccordionSummary,
     Button,
@@ -117,13 +117,14 @@ class Shopping extends Component<IProps, IState> {
     handleQuantityToChange = e => {
         this.props.productStore.setFilterDataQuantityTo(e.target.value)
     }
+
     /////////////////////////////////////////////////////////////////////////
 
-    render () {
+    render() {
         const {loading} = this.props.commonStore
-        const { products } = this.props.productStore
-        const { categories } = this.props.categoryStore
-        const { classes } = this.props
+        const {products} = this.props.productStore
+        const {categories} = this.props.categoryStore
+        const {classes} = this.props
         return <div>
             {/* drawer toggle button */}
             <Button
@@ -139,13 +140,13 @@ class Shopping extends Component<IProps, IState> {
             </Button>
             {/* drawer */}
             <Drawer
-                open={ this.state.sidePanelVisibility }
+                open={this.state.sidePanelVisibility}
                 onClose={this.toggleDrawer(false)}
                 className={classes.drawer}
             >
                 <Accordion>
                     <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
+                        expandIcon={<ExpandMoreIcon/>}
                         aria-controls="panel2a-content"
                         id="panel2a-header"
                     >
@@ -168,14 +169,15 @@ class Shopping extends Component<IProps, IState> {
                                                     this.handleCategoriesFilter(e, category.id)
                                                 }}/>
                                         }
-                                        label={category.name} />
-                                )})}
+                                        label={category.name}/>
+                                )
+                            })}
                         </FormGroup>
                     </AccordionDetails>
                 </Accordion>
                 <Accordion>
                     <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
+                        expandIcon={<ExpandMoreIcon/>}
                         aria-controls="panel2a-content"
                         id="panel2a-header"
                     >
@@ -231,21 +233,59 @@ class Shopping extends Component<IProps, IState> {
                         </FormGroup>
                     </AccordionDetails>
                 </Accordion>
+
+
                 <Accordion>
                     <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
+                        expandIcon={<ExpandMoreIcon/>}
                         aria-controls="panel2a-content"
                         id="panel2a-header"
                     >
                         <Typography className={classes.heading}>Sort</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Typography>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                            sit amet blandit leo lobortis eget.
-                        </Typography>
+                        <FormGroup row>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name={'New first'}
+                                        data-newFirst-id={'New first'}
+                                        onClick={(e) => {
+                                            this.handleNewFirstFilter()
+                                        }}/>}
+                                label={'New first'}/>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name={'Old first'}
+                                        data-newFirst-id={'Old first'}
+                                        onClick={(e) => {
+                                            this.handleOldFirstFilter()
+                                        }}/>}
+                                label={'Old first'}/>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name={'Cheep first'}
+                                        data-newFirst-id={'Cheep first'}
+                                        onClick={(e) => {
+                                            this.handleCheepFirstFilter()
+                                        }}/>}
+                                label={'Cheep first'}/>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name={'Expensive first'}
+                                        data-newFirst-id={'Expensive first'}
+                                        onClick={(e) => {
+                                            this.handleExpensiveFirstFilter()
+                                        }}/>}
+                                label={'Expensive first'}/>
+                        </FormGroup>
                     </AccordionDetails>
                 </Accordion>
+
+
                 {/*<form className={classes.form}>
                 </form>*/}
             </Drawer>
