@@ -7,6 +7,7 @@ class ProductStore {
 
     private HTTP_STATUS_OK: number = 200
     private HTTP_STATUS_CREATED: number = 201
+    private allowGetPriceBounds: boolean = true
 
     @observable currentProduct: Product = new Product()
     @observable currentProductId: BigInteger = null
@@ -74,28 +75,33 @@ class ProductStore {
         this.currentProduct.image = image
     }
 
+    private handlePriceBoundsValues () {
+        if (this.priceFrom && this.priceTo) {
+            this.allowGetPriceBounds = false
+            setTimeout(() => {
+                if(this.allowGetPriceBounds) {
+                    this.fetchProductPriceBounds()
+                }
+            }, 3500)
+            this.getFilteredProducts()
+        } else {
+            this.allowGetPriceBounds = true
+            setTimeout(() => {
+                if(this.allowGetPriceBounds) {
+                    this.fetchProductPriceBounds()
+                }
+            }, 3000)
+        }
+    }
+
     @action setFilterDataPriceFrom(priceFrom: number) {
         this.priceFrom = priceFrom
-        if (this.priceFrom == 0 || this.priceFrom == null) {
-            this.fetchProductPriceBounds()
-            Thread.sleep(3000)
-            this.priceFrom = this.priceFromBound
-        }
-        if (this.priceFrom && this.priceTo) {
-            this.getFilteredProducts()
-        }
+        this.handlePriceBoundsValues()
     }
 
     @action setFilterDataPriceTo(priceTo: number) {
         this.priceTo = priceTo
-        if (this.priceTo == 0 || this.priceTo == null) {
-            this.fetchProductPriceBounds()
-            Thread.sleep(3000)
-            this.priceTo = this.priceToBound
-        }
-        if (this.priceFrom && this.priceTo) {
-            this.getFilteredProducts()
-        }
+        this.handlePriceBoundsValues()
     }
 
     //////////////////////////////////////////////////////////
@@ -103,7 +109,7 @@ class ProductStore {
         this.quantityFrom = quantityFrom
         if (this.quantityFrom == 0 || this.quantityFrom == null) {
             this.fetchProductQuantityBounds()
-            Thread.sleep(3000)
+            //Thread.sleep(3000)
             this.quantityFrom = this.quantityFromBound
         }
         if (this.quantityFrom && this.quantityTo) {
@@ -115,7 +121,7 @@ class ProductStore {
         this.quantityTo = quantityTo
         if (this.quantityTo == 0 || this.quantityTo == null) {
             this.fetchProductQuantityBounds()
-            Thread.sleep(3000)
+            //Thread.sleep(3000)
             this.quantityTo = this.quantityToBound
         }
         if (this.quantityFrom && this.quantityTo) {
@@ -291,9 +297,9 @@ class ProductStore {
                         ::orderBy:${this.orderBy}
                         ::sortingDirection:${this.sortingDirection}
                         /?search=
-                            price>:${this.priceFrom}
-                            price<:${this.priceTo}
-                            quantity>:${this.quantityFrom}
+                            price>:${this.priceFrom};
+                            price<:${this.priceTo};
+                            quantity>:${this.quantityFrom};
                             quantity<:${this.quantityTo}
                             ${(this.categories && this.categories.length > 0) ? ';category:' + JSON.stringify(this.categories) : ''}`
         /////////////////////////////////////////////////////////////////////////////////
@@ -339,6 +345,15 @@ class ProductStore {
                 if (responseModel.status === 'success') {
                     this.priceFromBound = responseModel.data.min
                     this.priceToBound = responseModel.data.max
+                    if (this.allowGetPriceBounds) {
+                        if (!this.priceFrom) {
+                            this.priceFrom = this.priceFromBound
+                        }
+                        if (!this.priceTo) {
+                            this.priceTo = this.priceToBound
+                        }
+                        this.getFilteredProducts()
+                    }
                 } else if (responseModel.status === 'fail') {
                     commonStore.setError(responseModel.message)
                 }
