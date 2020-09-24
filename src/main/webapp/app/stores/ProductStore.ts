@@ -8,6 +8,7 @@ class ProductStore {
     private HTTP_STATUS_OK: number = 200
     private HTTP_STATUS_CREATED: number = 201
     private allowGetPriceBounds: boolean = true
+    private allowGetQuantityBounds: boolean = true
 
     @observable currentProduct: Product = new Product()
     @observable currentProductId: BigInteger = null
@@ -102,6 +103,25 @@ class ProductStore {
         }
     }
 
+    private handleQuantityBoundsValues () {
+        if (this.quantityFrom && this.quantityTo) {
+            this.allowGetQuantityBounds = false
+            setTimeout(() => {
+                if(this.allowGetQuantityBounds) {
+                    this.fetchProductQuantityBounds()
+                }
+            }, 3500)
+            this.getFilteredProducts()
+        } else {
+            this.allowGetQuantityBounds = true
+            setTimeout(() => {
+                if(this.allowGetQuantityBounds) {
+                    this.fetchProductQuantityBounds()
+                }
+            }, 3000)
+        }
+    }
+
     @action setFilterDataPriceFrom(priceFrom: number) {
         this.priceFrom = priceFrom
         this.handlePriceBoundsValues()
@@ -115,26 +135,12 @@ class ProductStore {
     //////////////////////////////////////////////////////////
     @action setFilterDataQuantityFrom(quantityFrom: number) {
         this.quantityFrom = quantityFrom
-        if (this.quantityFrom == 0 || this.quantityFrom == null) {
-            this.fetchProductQuantityBounds()
-            //Thread.sleep(3000)
-            this.quantityFrom = this.quantityFromBound
-        }
-        if (this.quantityFrom && this.quantityTo) {
-            this.getFilteredProducts()
-        }
+        this.handleQuantityBoundsValues()
     }
 
     @action setFilterDataQuantityTo(quantityTo: number) {
         this.quantityTo = quantityTo
-        if (this.quantityTo == 0 || this.quantityTo == null) {
-            this.fetchProductQuantityBounds()
-            //Thread.sleep(3000)
-            this.quantityTo = this.quantityToBound
-        }
-        if (this.quantityFrom && this.quantityTo) {
-            this.getFilteredProducts()
-        }
+        this.handleQuantityBoundsValues()
     }
 
     ////////////////////////////////////////////////////////////
@@ -387,6 +393,15 @@ class ProductStore {
                 if (responseModel.status === 'success') {
                     this.quantityFromBound = responseModel.data.min
                     this.quantityToBound = responseModel.data.max
+                    if (this.allowGetQuantityBounds) {
+                        if (!this.quantityFrom) {
+                            this.quantityFrom = this.quantityFromBound
+                        }
+                        if (!this.quantityTo) {
+                            this.quantityTo = this.quantityToBound
+                        }
+                        this.getFilteredProducts()
+                    }
                 } else if (responseModel.status === 'fail') {
                     commonStore.setError(responseModel.message)
                 }
