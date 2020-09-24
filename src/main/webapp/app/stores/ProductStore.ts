@@ -75,6 +75,14 @@ class ProductStore {
         this.currentProduct.image = image
     }
 
+    @action setOrderBy(fieldName: string) {
+        this.orderBy = fieldName
+    }
+
+    @action setSortingDirection(direction: string) {
+        this.sortingDirection = direction
+    }
+
     private handlePriceBoundsValues () {
         if (this.priceFrom && this.priceTo) {
             this.allowGetPriceBounds = false

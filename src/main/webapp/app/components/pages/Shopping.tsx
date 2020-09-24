@@ -120,16 +120,28 @@ class Shopping extends Component<IProps, IState> {
         this.props.productStore.setFilterDataQuantityTo(e.target.value)
     }
     handleNewFirstFilter = e => {
-        this.props.productStore.getSortedProductsByPriceOrNovelty('DECS', 'id')
+        this.props.productStore.setOrderBy('id')
+        this.props.productStore.setSortingDirection('DESC')
+        this.props.productStore.getFilteredProducts()
+        //this.props.productStore.getSortedProductsByPriceOrNovelty('DECS', 'id')
     }
     handleOldFirstFilter = e => {
-        this.props.productStore.getSortedProductsByPriceOrNovelty('ASC', 'id')
+        //this.props.productStore.getSortedProductsByPriceOrNovelty('ASC', 'id')
+        this.props.productStore.setOrderBy('id')
+        this.props.productStore.setSortingDirection('ASC')
+        this.props.productStore.getFilteredProducts()
     }
     handleCheepFirstFilter = e => {
-        this.props.productStore.getSortedProductsByPriceOrNovelty('ASC', 'price')
+        this.props.productStore.setOrderBy('price')
+        this.props.productStore.setSortingDirection('ASC')
+        this.props.productStore.getFilteredProducts()
+        //this.props.productStore.getSortedProductsByPriceOrNovelty('ASC', 'price')
     }
     handleExpensiveFirstFilter = e => {
-        this.props.productStore.getSortedProductsByPriceOrNovelty('DESC', 'price')
+        this.props.productStore.setOrderBy('price')
+        this.props.productStore.setSortingDirection('DESC')
+        this.props.productStore.getFilteredProducts()
+        //this.props.productStore.getSortedProductsByPriceOrNovelty('DESC', 'price')
     }
 
     /////////////////////////////////////////////////////////////////////////
