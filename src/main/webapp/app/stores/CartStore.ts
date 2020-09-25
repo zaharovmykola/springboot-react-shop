@@ -81,6 +81,54 @@ class CartStore {
             commonStore.setLoading(false)
         }))
     }
+
+    @action minusToCart(productId: number, notifySuccess: () => void) {
+        commonStore.clearError()
+        commonStore.setLoading(true)
+        fetch('/eCommerceShop/api/cart/' + productId,{
+            method: 'PUT'
+        }).then((response) => {
+            return response.json()
+        }).then(responseModel => {
+            if (responseModel) {
+                if (responseModel.status === 'success') {
+                    this.fetchCartItems()
+                    notifySuccess()
+                } else if (responseModel.status === 'fail') {
+                    commonStore.setError(responseModel.message)
+                }
+            }
+        }).catch((error) => {
+            commonStore.setError(error.message)
+            throw error
+        }).finally(action(() => {
+            commonStore.setLoading(false)
+        }))
+    }
+
+    @action deleteToCart(productId: number, notifySuccess: () => void) {
+        commonStore.clearError()
+        commonStore.setLoading(true)
+        fetch('/eCommerceShop/api/cart/' + productId,{
+            method: 'DELETE'
+        }).then((response) => {
+            return response.json()
+        }).then(responseModel => {
+            if (responseModel) {
+                if (responseModel.status === 'success') {
+                    this.fetchCartItems()
+                    notifySuccess()
+                } else if (responseModel.status === 'fail') {
+                    commonStore.setError(responseModel.message)
+                }
+            }
+        }).catch((error) => {
+            commonStore.setError(error.message)
+            throw error
+        }).finally(action(() => {
+            commonStore.setLoading(false)
+        }))
+    }
 }
 export {CartStore}
 export default new CartStore()

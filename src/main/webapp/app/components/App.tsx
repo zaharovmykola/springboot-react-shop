@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import './style.css'
 import {
     Router,
     Route,
     NavLink
 } from 'react-router-dom'
-import { CSSTransition } from 'react-transition-group'
+import {CSSTransition} from 'react-transition-group'
 import {inject, observer} from 'mobx-react'
 import {reaction} from 'mobx'
 import history from '../history'
@@ -48,7 +48,7 @@ const styles = theme =>
         },
         container: {
             maxWidth: '970px',
-            '& .page' : {
+            '& .page': {
                 position: 'static'
             }
         },
@@ -90,8 +90,8 @@ const styles = theme =>
             padding: theme.spacing(2, 4, 3),
         },
         closeButton: {
-            cursor:'pointer',
-            float:'right',
+            cursor: 'pointer',
+            float: 'right',
             marginTop: '-80px',
             marginRight: '-25px',
         }
@@ -149,19 +149,30 @@ class App extends Component<IProps, IState> {
     }
 
     handleCartItemPlus = (e, productId) => {
-        this.props.cartStore.addToCart(productId, () => {})
+        this.props.cartStore.addToCart(productId, () => {
+        })
+    }
+
+    handleCartItemMinus = (e, productId) => {
+        this.props.cartStore.minusToCart(productId, () => {
+        })
+    }
+
+    handleCartItemDelete = (e, productId) => {
+        this.props.cartStore.deleteToCart(productId, () => {
+        })
     }
 
     handleCartModalClose = (e) => {
         this.props.cartStore.setCartVisibility(false)
     }
 
-    render () {
-        const { routes } = this.props.routerStore
+    render() {
+        const {routes} = this.props.routerStore
         // получаем через пропс из обертки withStyles(styles) весь набор классов стилей,
         // который будет доступен из константы classes
-        const { classes } = this.props
-        const { cartItems } = this.props.cartStore
+        const {classes} = this.props
+        const {cartItems} = this.props.cartStore
         return <Router history={history}>
             <div className={classes.root}>
                 <AppBar position='sticky' className={classes.navBar}>
@@ -169,13 +180,13 @@ class App extends Component<IProps, IState> {
                         <Typography variant='h6' className={classes.title}>
                             ReactSPA
                         </Typography>
-                        <AppBarCollapse routes={routes} />
+                        <AppBarCollapse routes={routes}/>
                     </Toolbar>
                 </AppBar>
                 <Container maxWidth="sm" className={classes.container}>
-                    {routes.map(({ path, Component }) => (
+                    {routes.map(({path, Component}) => (
                         <Route key={path} exact path={path}>
-                            {({ match }) => (
+                            {({match}) => (
                                 <CSSTransition
                                     in={match != null}
                                     timeout={300}
@@ -183,7 +194,7 @@ class App extends Component<IProps, IState> {
                                     unmountOnExit
                                 >
                                     <div className='page'>
-                                        <Component />
+                                        <Component/>
                                     </div>
                                 </CSSTransition>
                             )}
@@ -191,8 +202,8 @@ class App extends Component<IProps, IState> {
                     ))}
                 </Container>
                 <Modal
-                    open={ !!this.props.commonStore.error }
-                    onClose={ this.handleErrorModalClose }
+                    open={!!this.props.commonStore.error}
+                    onClose={this.handleErrorModalClose}
                     aria-labelledby="simple-modal-title"
                     aria-describedby="simple-modal-description"
                     className={classes.modal}
@@ -202,7 +213,7 @@ class App extends Component<IProps, IState> {
                     </div>
                 </Modal>
                 <Modal
-                    open={ !!this.props.cartStore.cartShown }
+                    open={!!this.props.cartStore.cartShown}
                     aria-labelledby="simple-modal-title"
                     aria-describedby="simple-modal-description"
                     className={classes.modal}
@@ -237,7 +248,7 @@ class App extends Component<IProps, IState> {
                                                 <td>{(item.price * item.quantity).toFixed(2)}</td>
                                                 <td>
                                                     <Grid container spacing={1}>
-                                                        <Grid item xs={3} >
+                                                        <Grid item xs={3}>
                                                             <Button
                                                                 onClick={(e) => {
                                                                     this.handleCartItemPlus(e, item.productId)
@@ -245,18 +256,18 @@ class App extends Component<IProps, IState> {
                                                                 <Icon>exposure_plus_1</Icon>
                                                             </Button>
                                                         </Grid>
-                                                        <Grid item xs={3} >
+                                                        <Grid item xs={3}>
                                                             <Button
                                                                 onClick={(e) => {
-                                                                    // this.handleCartItemPlus(e, item.productId)
+                                                                    this.handleCartItemMinus(e, item.productId)
                                                                 }}>
                                                                 <Icon>exposure_neg_1</Icon>
                                                             </Button>
                                                         </Grid>
-                                                        <Grid item xs={3} >
+                                                        <Grid item xs={3}>
                                                             <Button
                                                                 onClick={(e) => {
-                                                                    // this.handleCartItemPlus(e, item.productId)
+                                                                    this.handleCartItemDelete(e, item.productId)
                                                                 }}>
                                                                 <Icon>clear</Icon>
                                                             </Button>
@@ -266,6 +277,18 @@ class App extends Component<IProps, IState> {
                                             </tr>
                                         )
                                     })}
+                                    <tr>
+                                        <td>
+                                            <strong>
+                                                Total
+                                            </strong>
+                                        </td>
+                                        <td>
+                                            <strong>
+                                                {this.props.cartStore.cartItemsTotalPrice}
+                                            </strong>
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             ) : (

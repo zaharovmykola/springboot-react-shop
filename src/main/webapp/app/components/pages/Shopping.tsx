@@ -63,7 +63,7 @@ const styles = theme =>
             },
         },
         buttonsort: {
-            margin: 5
+            margin: 1
         }
     })
 
@@ -339,7 +339,7 @@ class Shopping extends Component<IProps, IState> {
                                         this.handleExpensiveFirstFilter(e)
                                     }}
                                 >
-                                    Expensive
+                                    Costly
                                 </Button>
 
                     </AccordionDetails>
