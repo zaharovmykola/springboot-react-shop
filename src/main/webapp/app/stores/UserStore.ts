@@ -47,7 +47,14 @@ class UserStore {
             // из полученного отклика сервера извлечь тело - json-string,
             // преобразовать в json-object
             // и передать для дальнейшей обработки
-            return response.json()
+            if (response.status === this.httpStatusOk) {
+                return response.json()
+            } else {
+                return {
+                    'status': 'unauthorized',
+                    'message': 'wrong login or password'
+                }
+            }
         }).then((response) => {
             // если объект отклика сервера получен
             if (response) {
@@ -58,6 +65,8 @@ class UserStore {
                 } else if (response.status === 'fail') {
                     // установка в переменную хранилища сообщения об ошибке
                     commonStore.setError(response.message)
+                } else if (response.status === 'unauthorized') {
+                    // TODO visualize validation errors
                 }
             }
         }).catch((error) => {
@@ -110,7 +119,13 @@ class UserStore {
         fetch('logout', {
             method: 'GET'
         }).then((response) => {
-            return response.json()
+            if (response.status === 204) {
+                return {
+                    'status': 'success'
+                }
+            } else {
+                return response.json()
+            }
         }).then((response) => {
             if (response) {
                 if (response.status === 'success') {
