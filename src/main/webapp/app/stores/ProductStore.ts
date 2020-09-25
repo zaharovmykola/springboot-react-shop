@@ -20,17 +20,14 @@ class ProductStore {
     @observable priceFrom: number = null
     @observable priceTo: number = null
 
-    ////////////////////////////////////////
     @observable quantityFrom: number = null
     @observable quantityTo: number = null
-    /////////////////////////////////////////
 
     @observable categories: Array<number> = []
 
     @observable priceFromBound: number = 0
     @observable priceToBound: number = 1000000
 
-    ///////////////////////////////////////////
     @observable quantityFromBound: number = 0
     @observable quantityToBound: number = 1000000
 
@@ -40,8 +37,6 @@ class ProductStore {
             || (this.quantityFrom && this.quantityTo)
             || this.categories.length > 0
     }
-
-    //////////////////////////////////////////////
 
     @action setCurrentProduct(product: Product) {
         this.currentProduct = product
@@ -132,7 +127,6 @@ class ProductStore {
         this.handlePriceBoundsValues()
     }
 
-    //////////////////////////////////////////////////////////
     @action setFilterDataQuantityFrom(quantityFrom: number) {
         this.quantityFrom = quantityFrom
         this.handleQuantityBoundsValues()
@@ -142,8 +136,6 @@ class ProductStore {
         this.quantityTo = quantityTo
         this.handleQuantityBoundsValues()
     }
-
-    ////////////////////////////////////////////////////////////
 
     // установка содержимого списка идентификаторов категорий
     // для фильтра
@@ -164,7 +156,6 @@ class ProductStore {
             this.categories =
                 this.categories.filter(categoryId => categoryId !== id)
         }
-        console.log(this.categories)
         // запрос на бэкенд для получения списка моделей товаров
         // согласно новому состоянию фильтра (набора свойств локального хранилища
         // для фильтрации)
@@ -303,7 +294,6 @@ class ProductStore {
         commonStore.clearError()
         commonStore.setLoading(true)
 
-        ////////////////////////////////////////////////////////////////////////////////
         // составление строки запроса к действию контроллера,
         // возвращающему отфильтрованный отсортированный список моделей товаров
         const filteredProductsUrl =
@@ -316,7 +306,6 @@ class ProductStore {
                             quantity>:${this.quantityFrom};
                             quantity<:${this.quantityTo}
                             ${(this.categories && this.categories.length > 0) ? ';category:' + JSON.stringify(this.categories) : ''}`
-        /////////////////////////////////////////////////////////////////////////////////
 
         console.log(filteredProductsUrl)
         // перед запросом на сервер удаляем все пробельные символы из адреса,
@@ -380,7 +369,6 @@ class ProductStore {
         }))
     }
 
-    ///////////////////////////////////////////////////////////////////
     @action fetchProductQuantityBounds() {
         commonStore.clearError()
         commonStore.setLoading(true)
@@ -413,44 +401,6 @@ class ProductStore {
             commonStore.setLoading(false)
         }))
     }
-    @action getSortedProductsByPriceOrNovelty(direction: string, orderByField: string) {
-        commonStore.clearError()
-        commonStore.setLoading(true)
-        // составление строки запроса к действию контроллера,
-        // возвращающему отфильтрованный отсортированный список моделей товаров
-        const filteredProductsUrl =
-            `api/products/filtered
-                        ::orderBy:${orderByField}
-                        ::sortingDirection:${direction}`
-        console.log(filteredProductsUrl)
-        // перед запросом на сервер удаляем все пробельные символы из адреса,
-        // потому что описанный выше блок кода добавляет их для форматирования
-        fetch(filteredProductsUrl.replace(/\s/g, ''), {
-            method: 'GET'
-        }).then((response) => {
-            return response.json()
-        }).then(responseModel => {
-            if (responseModel) {
-                if (responseModel.status === 'success') {
-                    this.products =
-                        JSON.parse(
-                            decodeURIComponent(
-                                JSON.stringify(responseModel.data)
-                                    .replace(/(%2E)/ig, '%20')
-                            )
-                        )
-                } else if (responseModel.status === 'fail') {
-                    commonStore.setError(responseModel.message)
-                }
-            }
-        }).catch((error) => {
-            commonStore.setError(error.message)
-            throw error
-        }).finally(action(() => {
-            commonStore.setLoading(false)
-        }))
-    }
-    ////////////////////////////////////////////////////////////////////
 
 }
 

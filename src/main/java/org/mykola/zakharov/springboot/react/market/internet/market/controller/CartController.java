@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpSession;
 
 @RestController
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpSession;
 public class CartController {
 
     @Autowired
-    private CartService productService;
+    private CartService cartService;
 
     // внедрение объекта сеанса http через аргумент метода
     @GetMapping("")
@@ -24,7 +25,7 @@ public class CartController {
         if (cart == null) {
             cart = new Cart();
         }
-        return new ResponseEntity<>(productService.getCartItems(cart), HttpStatus.OK);
+        return new ResponseEntity<>(cartService.getCartItems(cart), HttpStatus.OK);
     }
 
     @PostMapping("/{id}")
@@ -37,7 +38,7 @@ public class CartController {
         }
         // вызов метода службы - увеличить число товара в корзине на 1
         ResponseModel response =
-                productService.changeCartItemCount(
+                cartService.changeCartItemCount(
                         cart
                         , id
                         , CartItem.Action.ADD
@@ -55,7 +56,7 @@ public class CartController {
             cart = new Cart();
         }
         ResponseModel response =
-                productService.changeCartItemCount(
+                cartService.changeCartItemCount(
                         cart
                         , id
                         , CartItem.Action.SUB
@@ -71,7 +72,7 @@ public class CartController {
             cart = new Cart();
         }
         ResponseModel response =
-                productService.changeCartItemCount(
+                cartService.changeCartItemCount(
                         cart
                         , id
                         , CartItem.Action.REM

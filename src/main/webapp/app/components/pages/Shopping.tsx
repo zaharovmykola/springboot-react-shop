@@ -7,24 +7,31 @@ import {
     CardContent,
     CardMedia, Checkbox, Drawer, FormControl, FormControlLabel, FormGroup,
     Grid,
-    Icon, InputLabel, MenuItem, Select, TextField,
+    Icon, InputLabel, MenuItem, Select, Snackbar, TextField,
     Typography, withStyles,
     WithStyles
 } from "@material-ui/core";
+import Alert from '@material-ui/lab/Alert'
 import {inject, observer} from "mobx-react";
 import {CommonStore} from "../../stores/CommonStore";
 import {ProductStore} from "../../stores/ProductStore";
 import {CategoryStore} from "../../stores/CategoryStore";
+import {CartStore} from "../../stores/CartStore"
+import {UserStore} from '../../stores/UserStore'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 interface IProps extends WithStyles<typeof styles> {
     commonStore: CommonStore,
     productStore: ProductStore,
-    categoryStore: CategoryStore
+    categoryStore: CategoryStore,
+    cartStore: CartStore,
+    userStore: UserStore
 }
 
 interface IState {
-    sidePanelVisibility: boolean
+    sidePanelVisibility: boolean,
+    snackBarVisibility: boolean,
+    snackBarText: string
 }
 
 const styles = theme =>
@@ -43,7 +50,10 @@ const styles = theme =>
             backgroundColor: '#ee6e73'
         },
         drawer: {
-            width: 300
+            width: 300,
+            '& .MuiDrawer-paper': {
+                position: 'static'
+            }
         },
         heading: {
             fontSize: theme.typography.pxToRem(15),
@@ -57,14 +67,16 @@ const styles = theme =>
         }
     })
 
-@inject('commonStore', 'productStore', 'categoryStore')
+@inject('commonStore', 'productStore', 'categoryStore', 'cartStore', 'userStore')
 @observer
 class Shopping extends Component<IProps, IState> {
 
     constructor(props) {
         super(props)
         this.state = {
-            sidePanelVisibility: false
+            sidePanelVisibility: false,
+            snackBarVisibility: false,
+            snackBarText: ''
         }
     }
 
@@ -112,45 +124,60 @@ class Shopping extends Component<IProps, IState> {
         this.props.productStore.setFilterDataPriceTo(e.target.value)
     }
 
-    ///////////////////////////////////////////////////////////////////////
     handleQuantityFromChange = e => {
         this.props.productStore.setFilterDataQuantityFrom(e.target.value)
     }
+
     handleQuantityToChange = e => {
         this.props.productStore.setFilterDataQuantityTo(e.target.value)
     }
+
+    handleAddToCart = (e, productId) => {
+        this.props.cartStore.addToCart(productId, () => {
+            this.setState({snackBarText: 'One item added to Your cart'})
+            this.setState({snackBarVisibility: true})
+            setTimeout(() => {
+                this.setState({snackBarVisibility: false})
+            }, 6000)
+        })
+    }
+
+    handleSnackBarClose = (event?: React.SyntheticEvent, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        this.setState({snackBarVisibility: false})
+    }
+
     handleNewFirstFilter = e => {
         this.props.productStore.setOrderBy('id')
         this.props.productStore.setSortingDirection('DESC')
         this.props.productStore.getFilteredProducts()
-        //this.props.productStore.getSortedProductsByPriceOrNovelty('DECS', 'id')
     }
+
     handleOldFirstFilter = e => {
-        //this.props.productStore.getSortedProductsByPriceOrNovelty('ASC', 'id')
         this.props.productStore.setOrderBy('id')
         this.props.productStore.setSortingDirection('ASC')
         this.props.productStore.getFilteredProducts()
     }
+
     handleCheepFirstFilter = e => {
         this.props.productStore.setOrderBy('price')
         this.props.productStore.setSortingDirection('ASC')
         this.props.productStore.getFilteredProducts()
-        //this.props.productStore.getSortedProductsByPriceOrNovelty('ASC', 'price')
     }
+
     handleExpensiveFirstFilter = e => {
         this.props.productStore.setOrderBy('price')
         this.props.productStore.setSortingDirection('DESC')
         this.props.productStore.getFilteredProducts()
-        //this.props.productStore.getSortedProductsByPriceOrNovelty('DESC', 'price')
     }
 
-    /////////////////////////////////////////////////////////////////////////
-
     render() {
-        const {loading} = this.props.commonStore
-        const {products} = this.props.productStore
-        const {categories} = this.props.categoryStore
-        const {classes} = this.props
+        const { loading } = this.props.commonStore
+        const { products } = this.props.productStore
+        const { categories } = this.props.categoryStore
+        const { classes } = this.props
         return <div>
             {/* drawer toggle button */}
             <Button
@@ -318,9 +345,6 @@ class Shopping extends Component<IProps, IState> {
                     </AccordionDetails>
                 </Accordion>
 
-
-                {/*<form className={classes.form}>
-                </form>*/}
             </Drawer>
             <Grid container>
                 {products.map(product => {
@@ -352,7 +376,14 @@ class Shopping extends Component<IProps, IState> {
                                     {/*<Button size="small" color="primary">
                                         Share
                                     </Button>*/}
-                                    <Button size="small" color="primary" data-product-id={product.id}>
+                                    <Button
+                                        size="small"
+                                        color="primary"
+                                        data-product-id={product.id}
+                                        onClick={(e) => {
+                                            this.handleAddToCart(e, product.id)
+                                        }}
+                                        style={{display: this.props.userStore.user ? 'inline' : 'none' }}>
                                         Add to cart
                                     </Button>
                                 </CardActions>
@@ -362,6 +393,13 @@ class Shopping extends Component<IProps, IState> {
 
                 })}
             </Grid>
+            <Snackbar
+                open={this.state.snackBarVisibility}
+                autoHideDuration={6000} onClose={this.handleSnackBarClose}>
+                <Alert onClose={this.handleSnackBarClose} severity="success">
+                    {this.state.snackBarText}
+                </Alert>
+            </Snackbar>
         </div>
     }
 }
