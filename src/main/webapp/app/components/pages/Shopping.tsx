@@ -174,10 +174,10 @@ class Shopping extends Component<IProps, IState> {
     }
 
     render() {
-        const { loading } = this.props.commonStore
-        const { products } = this.props.productStore
-        const { categories } = this.props.categoryStore
-        const { classes } = this.props
+        const {loading} = this.props.commonStore
+        const {products} = this.props.productStore
+        const {categories} = this.props.categoryStore
+        const {classes} = this.props
         return <div>
             {/* drawer toggle button */}
             <Button
@@ -302,45 +302,45 @@ class Shopping extends Component<IProps, IState> {
                     </AccordionSummary>
                     <AccordionDetails>
 
-                                <Button
-                                    className={classes.buttonsort}
-                                    variant="outlined"
-                                    onClick={(e) => {
-                                        this.handleNewFirstFilter(e)
-                                    }}
-                                >
-                                    New
-                                </Button>
+                        <Button
+                            className={classes.buttonsort}
+                            variant="outlined"
+                            onClick={(e) => {
+                                this.handleNewFirstFilter(e)
+                            }}
+                        >
+                            New
+                        </Button>
 
-                                <Button
-                                    className={classes.buttonsort}
-                                    variant="outlined"
-                                    onClick={(e) => {
-                                        this.handleOldFirstFilter(e)
-                                    }}
-                                >
-                                    Old
-                                </Button>
+                        <Button
+                            className={classes.buttonsort}
+                            variant="outlined"
+                            onClick={(e) => {
+                                this.handleOldFirstFilter(e)
+                            }}
+                        >
+                            Old
+                        </Button>
 
-                                <Button
-                                    className={classes.buttonsort}
-                                    variant="outlined"
-                                    onClick={(e) => {
-                                        this.handleCheepFirstFilter(e)
-                                    }}
-                                >
-                                    Cheep
-                                </Button>
+                        <Button
+                            className={classes.buttonsort}
+                            variant="outlined"
+                            onClick={(e) => {
+                                this.handleCheepFirstFilter(e)
+                            }}
+                        >
+                            Cheep
+                        </Button>
 
-                                <Button
-                                    className={classes.buttonsort}
-                                    variant="outlined"
-                                    onClick={(e) => {
-                                        this.handleExpensiveFirstFilter(e)
-                                    }}
-                                >
-                                    Costly
-                                </Button>
+                        <Button
+                            className={classes.buttonsort}
+                            variant="outlined"
+                            onClick={(e) => {
+                                this.handleExpensiveFirstFilter(e)
+                            }}
+                        >
+                            Costly
+                        </Button>
 
                     </AccordionDetails>
                 </Accordion>
@@ -383,8 +383,22 @@ class Shopping extends Component<IProps, IState> {
                                         onClick={(e) => {
                                             this.handleAddToCart(e, product.id)
                                         }}
-                                        style={{display: this.props.userStore.user ? 'inline' : 'none' }}>
+                                        style={{display: this.props.userStore.user ? 'inline' : 'none'}}>
                                         Add to cart
+                                    </Button>
+                                    <Button
+                                        className="fb-share-button"
+                                        data-href="https://developers.facebook.com/docs/plugins/"
+                                        data-layout="button_count"
+                                        data-size="large"
+                                    >
+                                        <a
+                                            target="_blank"
+                                            href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse"
+                                            className="fb-xfbml-parse-ignore"
+                                        >
+                                            Share
+                                        </a>
                                     </Button>
                                 </CardActions>
                             </Card>

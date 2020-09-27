@@ -47,7 +47,7 @@ const styles = theme =>
             flexGrow: 1,
         },
         container: {
-            maxWidth: '970px',
+            maxWidth: '1300px',
             '& .page': {
                 position: 'static'
             }
