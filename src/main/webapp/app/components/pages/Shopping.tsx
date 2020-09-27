@@ -64,7 +64,14 @@ const styles = theme =>
         },
         buttonsort: {
             margin: 1
-        }
+        },
+        facebookButton: {
+            backgroundImage: '/images/shareFacebook.png',
+            cursor: 'pointer',
+            maxwidth: 60,
+            maxheight: 30,
+            border: 'none'
+    }
     })
 
 @inject('commonStore', 'productStore', 'categoryStore', 'cartStore', 'userStore')
@@ -387,11 +394,13 @@ class Shopping extends Component<IProps, IState> {
                                         Add to cart
                                     </Button>
                                     <Button
-                                        className="fb-share-button"
+                                        //className="fb-share-button"
                                         data-href="https://developers.facebook.com/docs/plugins/"
                                         data-layout="button_count"
                                         data-size="large"
+                                        className={classes.facebookButton}
                                     >
+
                                         <a
                                             target="_blank"
                                             href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse"
