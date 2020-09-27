@@ -31,7 +31,8 @@ interface IProps extends WithStyles<typeof styles> {
 interface IState {
     sidePanelVisibility: boolean,
     snackBarVisibility: boolean,
-    snackBarText: string
+    snackBarText: string,
+    facebookShareAddress: string
 }
 
 const styles = theme =>
@@ -83,7 +84,8 @@ class Shopping extends Component<IProps, IState> {
         this.state = {
             sidePanelVisibility: false,
             snackBarVisibility: false,
-            snackBarText: ''
+            snackBarText: '',
+            facebookShareAddress: 'https://www.facebook.com/sharer/sharer.php?u=localhost:8090/eCommerceShop/shopping&t='
         }
     }
 
@@ -147,6 +149,12 @@ class Shopping extends Component<IProps, IState> {
                 this.setState({snackBarVisibility: false})
             }, 6000)
         })
+    }
+
+    handleFacebookButton = (e, productTitle, productDescription) => {
+            var someLink = this.state.facebookShareAddress + productTitle + '/' + productDescription
+            this.setState({facebookShareAddress: someLink})
+
     }
 
     handleSnackBarClose = (event?: React.SyntheticEvent, reason?: string) => {
@@ -395,12 +403,15 @@ class Shopping extends Component<IProps, IState> {
                                     </Button>
                                     <Button
                                         className={classes.facebookButton}
+                                        onClick={(e) => {
+                                            this.handleFacebookButton(e, product.title, product.description)
+                                        }}
                                     >
                                         <a
                                             target="_blank"
-                                            href="https://www.facebook.com/sharer/sharer.php?u="
+                                            href= {this.state.facebookShareAddress}
                                         >
-                                            Share
+                                            <strong>f</strong> Share
                                         </a>
                                     </Button>
                                 </CardActions>
