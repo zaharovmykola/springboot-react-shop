@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {
-    Accordion, AccordionDetails, AccordionSummary,
+    Accordion, AccordionDetails, AccordionSummary, Avatar,
     Button,
     Card,
     CardActionArea, CardActions,
@@ -19,8 +19,13 @@ import {CategoryStore} from "../../stores/CategoryStore";
 import {CartStore} from "../../stores/CartStore"
 import {UserStore} from '../../stores/UserStore'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import {RouteComponentProps} from 'react-router-dom'
 
-interface IProps extends WithStyles<typeof styles> {
+interface MatchParams {
+    productId: string
+}
+
+interface IProps extends WithStyles<typeof styles>, RouteComponentProps<MatchParams> {
     commonStore: CommonStore,
     productStore: ProductStore,
     categoryStore: CategoryStore,
@@ -66,13 +71,17 @@ const styles = theme =>
         buttonsort: {
             margin: 1
         },
+        facebookButtonImage: {
+            width: '100%'
+        },
+        /*,
         facebookButton: {
             backgroundImage: '/images/shareFacebook.png',
             cursor: 'pointer',
             maxwidth: 60,
             maxheight: 30,
             border: 'none'
-    }
+        } */
     })
 
 @inject('commonStore', 'productStore', 'categoryStore', 'cartStore', 'userStore')
@@ -85,11 +94,16 @@ class Shopping extends Component<IProps, IState> {
             sidePanelVisibility: false,
             snackBarVisibility: false,
             snackBarText: '',
-            facebookShareAddress: 'https://www.facebook.com/sharer/sharer.php?u=localhost:8090/eCommerceShop/shopping&t='
+            facebookShareAddress: 'https://www.facebook.com/sharer/sharer.php?display=page&u='
         }
     }
 
     componentDidMount() {
+        console.log(this.props.match)
+        if (this.props.match && this.props.match.params.productId) {
+            console.log(this.props.match.params)
+            console.log('prod id = ' + this.props.match.params.productId)
+        }
         // сразу после монтирования компонента в виртуальный DOM
         // просим у локальных хранилищ загрузить
         // списки моделей товаров и категорий
@@ -151,9 +165,10 @@ class Shopping extends Component<IProps, IState> {
         })
     }
 
-    handleFacebookButton = (e, productTitle, productDescription) => {
-            var someLink = this.state.facebookShareAddress + productTitle + '/' + productDescription
-            this.setState({facebookShareAddress: someLink})
+    handleFacebookButton = (e, productId) => {
+            // var someLink = this.state.facebookShareAddress + productTitle + '' + productDescription
+            // this.setState({facebookShareAddress: someLink})
+            this.setState({facebookShareAddress: this.state.facebookShareAddress + 'https://github.com/zaharovmykola/springboot-react-shop'})// 'http://localhost:8090/eCommerceShop/shopping/:' + productId})
 
     }
 
@@ -388,32 +403,41 @@ class Shopping extends Component<IProps, IState> {
                                     </CardContent>
                                 </CardActionArea>
                                 <CardActions>
-                                    {/*<Button size="small" color="primary">
-                                        Share
-                                    </Button>*/}
-                                    <Button
-                                        size="small"
-                                        color="primary"
-                                        data-product-id={product.id}
-                                        onClick={(e) => {
-                                            this.handleAddToCart(e, product.id)
-                                        }}
-                                        style={{display: this.props.userStore.user ? 'inline' : 'none'}}>
-                                        Add to cart
-                                    </Button>
-                                    <Button
-                                        className={classes.facebookButton}
-                                        onClick={(e) => {
-                                            this.handleFacebookButton(e, product.title, product.description)
-                                        }}
-                                    >
-                                        <a
-                                            target="_blank"
-                                            href= {this.state.facebookShareAddress}
-                                        >
-                                            <strong>f</strong> Share
-                                        </a>
-                                    </Button>
+                                    <Grid container>
+                                        <Grid item
+                                            xs={4}>
+                                            <Button
+                                                className={classes.facebookButton}
+                                                onClick={(e) => {
+                                                    this.handleFacebookButton(e, product.id)
+                                                }}
+                                                startIcon={
+                                                    <a
+                                                        target="_blank"
+                                                        href= {this.state.facebookShareAddress}
+                                                    >
+                                                        <img
+                                                            src={'images/shareFacebook.png'}
+                                                            className={classes.facebookButtonImage}
+                                                        />
+                                                    </a>
+                                                }
+                                            />
+                                        </Grid>
+                                        <Grid item
+                                              xs={8}>
+                                            <Button
+                                                size="small"
+                                                color="primary"
+                                                data-product-id={product.id}
+                                                onClick={(e) => {
+                                                    this.handleAddToCart(e, product.id)
+                                                }}
+                                                style={{display: this.props.userStore.user ? 'inline' : 'none'}}>
+                                                Add to cart
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
                                 </CardActions>
                             </Card>
                         </Grid>

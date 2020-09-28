@@ -13,20 +13,20 @@ class RouterStore {
 	// список моделей роутов для гостя
 	private anonymousRoutes: Array<object> = [
 		{path: '/', name: 'Home', Component: Home},
-		{path: '/shopping', name: 'Shopping', Component: Shopping},
+		{path: '/shopping:productId?', name: 'Shopping', Component: Shopping},
 		{path: '/signin', name: 'Sign in', Component: SignIn},
-		{path: '/signup', name: 'Register', Component: SignUp}
+		{path: '/signup', name: 'Register', Component: SignUp},
 	]
 
 	// список моделей роутов для аунтентифицированного пользователя
 	private loggedRoutes: Array<object> = [
 		{path: '/', name: 'Home', Component: Home},
-		{path: '/shopping', name: 'Shopping', Component: Shopping},
+		{path: '/shopping:productId?', name: 'Shopping', Component: Shopping},
 		{path: '/auth:out', name: 'Sign out', Component: Home}
 	]
 	private adminRoutes: Array<object> = [
 		{path: '/', name: 'Home', Component: Home},
-		{path: '/shopping', name: 'Shopping', Component: Shopping},
+		{path: '/shopping:productId?', name: 'Shopping', Component: Shopping},
 		{path: '/admin', name: 'Dashboard', Component: Dashboard},
 		{path: '/admin/categories', name: 'DashboardCategories', Component: DashboardCategories},
 		{path: '/admin/products', name: 'DashboardProducts', Component: DashboardProducts},

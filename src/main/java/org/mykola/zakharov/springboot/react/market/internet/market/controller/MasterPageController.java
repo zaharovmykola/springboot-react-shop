@@ -9,6 +9,7 @@ public class MasterPageController {
     @RequestMapping(value = {
             "/",
             "/shopping",
+            "/shopping:*",
             "/signin",
             "/signup",
             "/admin"

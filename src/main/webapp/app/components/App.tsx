@@ -186,7 +186,8 @@ class App extends Component<IProps, IState> {
                 <Container maxWidth="sm" className={classes.container}>
                     {routes.map(({path, Component}) => (
                         <Route key={path} exact path={path}>
-                            {({match}) => (
+                            {   //console.log()
+                                ({match}) => (
                                 <CSSTransition
                                     in={match != null}
                                     timeout={300}
@@ -194,7 +195,7 @@ class App extends Component<IProps, IState> {
                                     unmountOnExit
                                 >
                                     <div className='page'>
-                                        <Component/>
+                                        <Component {...match} />
                                     </div>
                                 </CSSTransition>
                             )}
