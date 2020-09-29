@@ -1,7 +1,5 @@
 import {action, computed, observable} from 'mobx'
-import Product from '../models/ProductModel'
 import commonStore from './CommonStore'
-import Category from "app/models/CategoryModel";
 import CartItemModel from "app/models/CartItemModel";
 
 class CartStore {
@@ -129,6 +127,31 @@ class CartStore {
             commonStore.setLoading(false)
         }))
     }
+
+    @action getPurchaseButton(givePurchaseButtonHtml: (htmlText: string) => void) {
+        commonStore.clearError()
+        commonStore.setLoading(true)
+        fetch("/eCommerceShop/api/cart/pay",{
+            method: 'GET',
+            mode: 'no-cors'
+        }).then((response) => {
+            /* const text = response.text()
+            console.log(text)
+            text.then(text2 => console.log(text2)) */
+            return response.text()
+        }).then(response => {
+            if (response) {
+                console.log(response)
+                givePurchaseButtonHtml(response)
+            }
+        }).catch((error) => {
+            commonStore.setError(error.message)
+            throw error
+        }).finally(action(() => {
+            commonStore.setLoading(false)
+        }))
+    }
+
 }
 export {CartStore}
 export default new CartStore()

@@ -18,6 +18,7 @@ import {CommonStore} from "../../../stores/CommonStore";
 import {ProductStore} from "../../../stores/ProductStore";
 import {CategoryStore} from "../../../stores/CategoryStore";
 import history from "app/history";
+import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator'
 
 interface IProps extends WithStyles<typeof styles> {
 	commonStore: CommonStore,
@@ -55,6 +56,13 @@ const styles = theme =>
 		},
 		imageTextField: {
 			display: 'none'
+		},
+		errorBlock: {
+			right: 0,
+			fontSize: '12px',
+			color: 'red300',
+			position: 'absolute',
+			marginTop: '-25px',
 		}
 	})
 
@@ -69,6 +77,8 @@ class DashboardProducts extends Component<IProps, IState> {
 			sidePanelVisibility: false
 		}
 	}
+
+	titleRef = React.createRef()
 
 	componentDidMount() {
 		this.props.categoryStore.fetchCategories()
@@ -101,6 +111,7 @@ class DashboardProducts extends Component<IProps, IState> {
 
 	handleProductCategoryChange = e => {
 		this.props.productStore.setProductCategory(e.target.value)
+		document.getElementById('productCategoryValidator').setAttribute('value', e.target.value)
 	}
 
 	handleProductPriceChange = e => {
@@ -130,18 +141,23 @@ class DashboardProducts extends Component<IProps, IState> {
 	}
 
 	handleProductEdit = (e, productId) => {
+		this.props.productStore.setCurrentProductId(productId)
 		this.setState({formMode: 'edit'})
 		this.setState({sidePanelVisibility: true})
-		console.log(productId)
 		const currentProduct =
 			this.props.productStore.products.find(p => p.id === productId)
-		console.log(currentProduct)
 		this.props.productStore.setCurrentProduct(currentProduct)
 	}
 
 	handleProductDelete = (e, productId) => {
 		this.props.productStore.setCurrentProductId(productId)
 		this.props.productStore.deleteProduct()
+	}
+
+	handleBlur = (e) => {
+		console.log(e.target.name + 'Ref')
+		console.log(this[e.target.name + 'Ref'].current)
+		this[e.target.name + 'Ref'].current.validate(e.target.value)
 	}
 
 	handleSubmitForm = e => {
@@ -195,13 +211,26 @@ class DashboardProducts extends Component<IProps, IState> {
 			</Button>
 			<Drawer
 				open={ this.state.sidePanelVisibility } onClose={this.toggleDrawer(false)}>
-				<form className={classes.form}>
-					<FormControl className={classes.formControl}>
+				<ValidatorForm
+					className={classes.form}
+					onSubmit={this.handleSubmitForm}
+					onError={errors => console.log(errors)}
+					ref='form'
+				>
+					<FormControl
+						className={classes.formControl}
+					>
 						<TextField
-							id="title"
+							id='title'
+							name='title'
 							label={'product title'}
 							value={this.props.productStore.currentProduct.title}
 							onChange={this.handleProductTitleChange}
+							required
+							/*validators={['required']}
+                            errorMessages={['title is required']}
+                            onBlur={this.handleBlur}
+                            ref={this.titleRef}*/
 						/>
 					</FormControl>
 					<FormControl className={classes.formControl}>
@@ -213,14 +242,27 @@ class DashboardProducts extends Component<IProps, IState> {
 							onChange={this.handleProductCategoryChange}
 						>
 							{categories.map(category => {
+								// console.log(category.id, this.props.productStore.currentProduct.categoryId)
 								return (
-									<MenuItem value={category.id}>{category.name}</MenuItem>
+									<MenuItem
+										value={category.id.toString()}
+										/*selected={category.id === this.props.productStore.currentProduct.categoryId}*/>
+										{category.name}
+									</MenuItem>
 								)})}
 						</Select>
+						<input
+							id='productCategoryValidator'
+							tabIndex={-1}
+							autoComplete="off"
+							style={{ opacity: 0, height: 0 }}
+							value={this.props.productStore.currentProduct.categoryId?.toString()}
+							required={true}
+						/>
 					</FormControl>
 					<FormControl className={classes.formControl}>
 						<TextField
-							id="description"
+							id='description'
 							label={'description'}
 							value={this.props.productStore.currentProduct.description}
 							onChange={this.handleProductDescriptionChange}
@@ -232,6 +274,8 @@ class DashboardProducts extends Component<IProps, IState> {
 							label={'price'}
 							value={this.props.productStore.currentProduct.price}
 							onChange={this.handleProductPriceChange}
+							required
+							inputProps={{pattern: '[0-9]*[.]?[0-9]+'}}
 						/>
 					</FormControl>
 					<FormControl className={classes.formControl}>
@@ -272,7 +316,7 @@ class DashboardProducts extends Component<IProps, IState> {
 						<Button
 							variant='outlined'
 							disabled={loading}
-							onClick={this.handleSubmitForm}
+							type='submit'
 						>
 							Submit
 							<Icon>
@@ -280,7 +324,7 @@ class DashboardProducts extends Component<IProps, IState> {
 							</Icon>
 						</Button>
 					</FormControl>
-				</form>
+				</ValidatorForm>
 			</Drawer>
 			<Table>
 				<thead>

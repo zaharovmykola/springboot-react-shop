@@ -1,14 +1,20 @@
 package org.mykola.zakharov.springboot.react.market.internet.market.service;
 
+import com.paypal.api.payments.*;
+import com.paypal.base.rest.APIContext;
+import com.paypal.base.rest.PayPalRESTException;
 import org.mykola.zakharov.springboot.react.market.internet.market.dao.PaymentHibernateDAO;
-import org.mykola.zakharov.springboot.react.market.internet.market.entity.Payment;
-import org.mykola.zakharov.springboot.react.market.internet.market.model.PaymentModel;
-import org.mykola.zakharov.springboot.react.market.internet.market.model.PaymentResponseModel;
+
+import org.mykola.zakharov.springboot.react.market.internet.market.model.Cart;
+import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,33 +23,69 @@ import java.util.stream.Collectors;
 public class PaymentService {
 
     @Autowired
+    private APIContext apiContext;
+
+    @Autowired
     private PaymentHibernateDAO dao;
 
-    public PaymentResponseModel pay(Payment payment) {
-        dao.save(payment);
-        PaymentResponseModel response =
-                PaymentResponseModel.builder()
-                .status("success")
-                .message("Payment successfull with amount : " + payment.getAmount())
-                .build();
-        return response;
+    public Payment createPayment(
+            Cart cart,
+            String currency,
+            String method,
+            String intent,
+            String description,
+            String cancelUrl,
+            String successUrl) throws PayPalRESTException {
+        Amount amount = new Amount();
+        amount.setCurrency(currency);
+
+        final Double totalPrice =
+                BigDecimal.valueOf(
+                        cart.getCartItems().stream()
+                                .map(cartItem -> cartItem.getPrice().doubleValue() * cartItem.getQuantity())
+                                .reduce(0d, (previousValue, currentValue) -> previousValue + currentValue)
+                ).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        amount.setTotal(String.format("%.2f", totalPrice));
+
+        Transaction transaction = new Transaction();
+        transaction.setDescription(description);
+        transaction.setAmount(amount);
+
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(transaction);
+
+        Payer payer = new Payer();
+        payer.setPaymentMethod(method);
+
+        Payment payment = new Payment();
+        payment.setIntent(intent);
+        payment.setPayer(payer);
+        payment.setTransactions(transactions);
+        RedirectUrls redirectUrls = new RedirectUrls();
+        redirectUrls.setCancelUrl(cancelUrl);
+        redirectUrls.setReturnUrl(successUrl);
+        payment.setRedirectUrls(redirectUrls);
+
+        return payment.create(apiContext);
     }
 
-    public PaymentResponseModel getTx(String vendor) {
-        List<Payment> payments = dao.findByVendor(vendor);
-        List<PaymentModel> paymentModels = payments.stream().map((p) ->
-            PaymentModel.builder()
-                .id(p.getId())
-                .transactionId(p.getTransactionId())
-                .vendor(p.getVendor())
-                .paymentDateString((new SimpleDateFormat("dd/mm/yyyy HH:mm:ss a")).format(p.getPaymentDate()))
-                .amount(p.getAmount())
-                .build()
-        ).collect(Collectors.toList());
-        return PaymentResponseModel.builder()
-            .status("success")
-            .payments(paymentModels)
-            .build();
+    public ResponseModel executePayment(String paymentId, String payerId) throws PayPalRESTException{
+        Payment payment = new Payment();
+        payment.setId(paymentId);
+        PaymentExecution paymentExecute = new PaymentExecution();
+        paymentExecute.setPayerId(payerId);
+        payment = payment.execute(apiContext, paymentExecute);
+        if (payment.getState().equals("approved")) {
+            return ResponseModel.builder()
+                    .status("success")
+                    .message("Payment successful with id: " + payment.getId())
+                    .build();
+        } else {
+            return ResponseModel.builder()
+                    .status("success")
+                    .message("Payment fail with message: " + payment.getFailureReason())
+                    .build();
+        }
     }
 }
 

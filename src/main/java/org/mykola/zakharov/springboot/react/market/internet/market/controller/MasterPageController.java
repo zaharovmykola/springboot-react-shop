@@ -9,12 +9,21 @@ public class MasterPageController {
     @RequestMapping(value = {
             "/",
             "/shopping",
-            "/shopping:*",
             "/signin",
             "/signup",
-            "/admin"
+            "/admin",
     })
     public String index() {
         return "index.html";
+    }
+
+    @RequestMapping(value = {"/payment:success"})
+    public String paymentSuccess() {
+        return "payment_success.html";
+    }
+
+    @RequestMapping(value = {"/payment:cancel"})
+    public String paymentCancel() {
+        return "payment_cancel.html";
     }
 }
