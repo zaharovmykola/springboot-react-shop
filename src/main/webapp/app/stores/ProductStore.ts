@@ -1,7 +1,7 @@
 import {action, computed, observable} from 'mobx'
 import Product from '../models/ProductModel'
 import commonStore from './CommonStore'
-import Category from "app/models/CategoryModel";
+import history from '../history'
 
 class ProductStore {
 
@@ -14,7 +14,8 @@ class ProductStore {
     @observable currentProductId: BigInteger = null
     @observable products: Array<Product> = []
     @observable currentProductImage: string = ''
-    // наблюдаемые свойства для фильтра товаров
+    /* наблюдаемые свойства для фильтра товаров */
+    @observable allowFetchFilteredProducts: boolean = true
     @observable orderBy: string = 'id'
     @observable sortingDirection: string = 'DESC'
     @observable priceFrom: number = null
@@ -24,18 +25,87 @@ class ProductStore {
     @observable quantityTo: number = null
 
     @observable categories: Array<number> = []
-
+    @observable searchString: string = ''
     @observable priceFromBound: number = 0
     @observable priceToBound: number = 1000000
 
     @observable quantityFromBound: number = 0
     @observable quantityToBound: number = 1000000
 
-    @computed get isFilterDataPresent() {
-        return (this.orderBy && this.sortingDirection)
-            || (this.priceFrom && this.priceTo)
-            || (this.quantityFrom && this.quantityTo)
-            || this.categories.length > 0
+    // учитель удалил это почему-то
+    // @computed get isFilterDataPresent() {
+    //     return (this.orderBy && this.sortingDirection)
+    //         || (this.priceFrom && this.priceTo)
+    //         || (this.quantityFrom && this.quantityTo)
+    //         || this.categories.length > 0
+    // }
+
+    // получение отфильтрованных отсортированных товаров с сервера
+    @action fetchFilteredProducts () {
+        commonStore.clearError()
+        commonStore.setLoading(true)
+        // составление строки запроса к действию контроллера,
+        // возвращающему отфильтрованный отсортированный список моделей товаров
+        const filteredProductsUrl =
+            `api/products/filtered
+                ::orderBy:${this.orderBy}
+                ::sortingDirection:${this.sortingDirection}
+                /?search=${this.searchString}`
+        // перед запросом на сервер удаляем все пробельные символы из адреса,
+        // потому что описанный выше блок кода добавляет их для форматирования
+        fetch(filteredProductsUrl.replace(/\s/g, ''), {
+            method: 'GET'
+        }).then((response) => {
+            return response.json()
+        }).then(responseModel => {
+            if (responseModel) {
+                if (responseModel.status === 'success') {
+                    this.products =
+                        JSON.parse(
+                            decodeURIComponent(
+                                JSON.stringify(responseModel.data)
+                                    .replace(/(%2E)/ig, '%20')
+                            )
+                        )
+                } else if (responseModel.status === 'fail') {
+                    commonStore.setError(responseModel.message)
+                }
+            }
+        }).catch((error) => {
+            commonStore.setError(error.message)
+            throw error
+        }).finally(action(() => {
+            this.setAllowFetchFilteredProducts(true)
+            commonStore.setLoading(false)
+        }))
+    }
+    // сборка веб-адреса для раздела покупок из значений
+    // отдельных полей состояния фильтра и установка его в адресную строку браузера
+    private changeShoppingUrlParams () {
+        /* history.push({
+            pathname: '/shopping',
+            search: `?orderBy=${this.orderBy}
+                        &sortingDirection=${this.sortingDirection}
+                        &search=
+                            ${this.priceFrom ? 'price>:' + this.priceFrom + ';' : ''}
+                            ${this.priceTo ? 'price<:' + this.priceTo + ';' : ''}
+                            ${this.quantityFrom ? 'quantity>:' + this.quantityFrom + ';' : ''}
+                            ${this.quantityTo ? 'quantity<:' + this.quantityTo + ';' : ''}
+                            ${(this.categories && this.categories.length > 0) ? ';category:' + JSON.stringify(this.categories) : ''}`
+                .replace(/\s/g, '')
+        }) */
+        history.push({
+            pathname: '/shopping',
+            search: `?orderBy=${this.orderBy}
+                        &sortingDirection=${this.sortingDirection}
+                        &search=
+                            price>:${this.priceFrom};
+                            price<:${this.priceTo};
+                            quantity>:${this.quantityFrom};
+                            quantity<:${this.quantityTo}
+                            ${(this.categories && this.categories.length > 0) ? ';category:' + JSON.stringify(this.categories) : ''}`
+                .replace(/\s/g, '')
+        })
     }
 
     @action setCurrentProduct(product: Product) {
@@ -71,12 +141,23 @@ class ProductStore {
         this.currentProduct.image = image
     }
 
+    /* действия с состоянием фильтра */
+
+    // блокировка повтороного использования фильтра,
+    // которую можно устанавливать,
+    // когда одно использование уже начато и еще не завершилось
+    @action setAllowFetchFilteredProducts(allow: boolean) {
+        this.allowFetchFilteredProducts = allow
+    }
+
     @action setOrderBy(fieldName: string) {
         this.orderBy = fieldName
+        this.changeShoppingUrlParams()
     }
 
     @action setSortingDirection(direction: string) {
         this.sortingDirection = direction
+        this.changeShoppingUrlParams()
     }
 
     private handlePriceBoundsValues () {
@@ -137,6 +218,13 @@ class ProductStore {
         this.handleQuantityBoundsValues()
     }
 
+    // установка параметра свободного запроса фильтрации,
+    // полученного из адресной строки браузера,
+    // в состояние локального хранилища
+    @action setFilterDataSearchString(searchString: string) {
+        this.searchString = searchString
+    }
+
     // установка содержимого списка идентификаторов категорий
     // для фильтра
     @action setFilerDataCategory(id: number, isChecked: boolean) {
@@ -159,7 +247,7 @@ class ProductStore {
         // запрос на бэкенд для получения списка моделей товаров
         // согласно новому состоянию фильтра (набора свойств локального хранилища
         // для фильтрации)
-        this.getFilteredProducts()
+        this.changeShoppingUrlParams()
     }
 
     @action fetchProducts() {
@@ -339,7 +427,7 @@ class ProductStore {
         }))
     }
 
-    @action fetchProductPriceBounds() {
+    @action fetchProductPriceBounds () {
         commonStore.clearError()
         commonStore.setLoading(true)
         fetch('/eCommerceShop/api/products/price-bounds', {
@@ -358,7 +446,7 @@ class ProductStore {
                         if (!this.priceTo) {
                             this.priceTo = this.priceToBound
                         }
-                        this.getFilteredProducts()
+                        this.changeShoppingUrlParams()
                     }
                 } else if (responseModel.status === 'fail') {
                     commonStore.setError(responseModel.message)
@@ -391,7 +479,7 @@ class ProductStore {
                         if (!this.quantityTo) {
                             this.quantityTo = this.quantityToBound
                         }
-                        this.getFilteredProducts()
+                        this.changeShoppingUrlParams()
                     }
                 } else if (responseModel.status === 'fail') {
                     commonStore.setError(responseModel.message)

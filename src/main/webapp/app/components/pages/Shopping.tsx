@@ -21,6 +21,12 @@ import {UserStore} from '../../stores/UserStore'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import {RouteComponentProps} from 'react-router-dom'
 
+interface IPreviousSearch {
+    searchString: string,
+    orderBy: string,
+    sortingDirection: string
+}
+
 interface MatchParams {
     productId: string
 }
@@ -37,7 +43,9 @@ interface IState {
     sidePanelVisibility: boolean,
     snackBarVisibility: boolean,
     snackBarText: string,
-    facebookShareAddress: string
+    facebookShareAddress: string,
+    prevSearch: any,
+    activeOrderButton: string
 }
 
 const styles = theme =>
@@ -74,14 +82,9 @@ const styles = theme =>
         facebookButtonImage: {
             width: '100%'
         },
-        /*,
-        facebookButton: {
-            backgroundImage: '/images/shareFacebook.png',
-            cursor: 'pointer',
-            maxwidth: 60,
-            maxheight: 30,
-            border: 'none'
-        } */
+        active: {
+            backgroundColor: '#ccc'
+        }
     })
 
 @inject('commonStore', 'productStore', 'categoryStore', 'cartStore', 'userStore')
@@ -94,10 +97,18 @@ class Shopping extends Component<IProps, IState> {
             sidePanelVisibility: false,
             snackBarVisibility: false,
             snackBarText: '',
-            facebookShareAddress: 'https://www.facebook.com/sharer/sharer.php?display=page&u='
+            facebookShareAddress: 'https://www.facebook.com/sharer/sharer.php?display=page&u=',
+            prevSearch: {
+                searchString: '',
+                orderBy: '',
+                sortingDirection: ''
+            },
+            activeOrderButton: ''
         }
     }
 
+    // обработчик события жизненного цикла компонента:
+    // компонент примонитирован к виртуальному дереву
     componentDidMount() {
         console.log(this.props.match)
         if (this.props.match && this.props.match.params.productId) {
@@ -105,14 +116,51 @@ class Shopping extends Component<IProps, IState> {
             console.log('prod id = ' + this.props.match.params.productId)
         }
         // сразу после монтирования компонента в виртуальный DOM
-        // просим у локальных хранилищ загрузить
-        // списки моделей товаров и категорий
+        // просим у локального хранилища загрузить
+        // список моделей категорий и границы цен и количств товаров
         this.props.categoryStore.fetchCategories()
         this.props.productStore.fetchProducts()
-        // TODO когда значения границ в локальном хранилище будут получены с сервера -
-        // скопировать их в свойства хранилища - priceFrom и priceTo
         this.props.productStore.fetchProductPriceBounds()
         this.props.productStore.fetchProductQuantityBounds()
+    }
+
+    // обработчик события жизненного цикла компонента:
+    // компонент получил новые значения свойств
+    componentDidUpdate(prevProps) {
+        // если работа фильтра не выполняется - передаем
+        // параметры из адресной строки в состояние фильра в локальном хранилище
+        console.log('allow = '+ this.props.productStore.allowFetchFilteredProducts)
+        if (this.props.productStore.allowFetchFilteredProducts) {
+            const windowUrl = window.location.search
+            const params = new URLSearchParams(windowUrl)
+            params.forEach((value, key) => console.log(key + " = " + value))
+            console.log(params)
+            const searchString: string = params.get('search') || ''
+            const orderBy = params.get('orderBy') || ''
+            const sortingDirection = params.get('sortingDirection') || ''
+            console.log(searchString, this.state.prevSearch.searchString)
+            console.log(orderBy, this.state.prevSearch.orderBy)
+            console.log(sortingDirection, this.state.prevSearch.sortingDirection)
+            if (searchString != this.state.prevSearch.searchString
+                || orderBy != this.state.prevSearch.orderBy
+                || sortingDirection != this.state.prevSearch.sortingDirection
+            ) {
+                this.setState({prevSearch: {
+                        searchString: searchString,
+                        orderBy: orderBy,
+                        sortingDirection: sortingDirection
+                    }})
+                this.props.productStore.setFilterDataSearchString(searchString)
+                if (orderBy) {
+                    this.props.productStore.setOrderBy(orderBy)
+                }
+                if (sortingDirection) {
+                    this.props.productStore.setSortingDirection(sortingDirection)
+                }
+                this.props.productStore.fetchFilteredProducts()
+                this.props.productStore.setAllowFetchFilteredProducts(false)
+            }
+        }
     }
 
     toggleDrawer = (open: boolean) => (
@@ -153,6 +201,12 @@ class Shopping extends Component<IProps, IState> {
 
     handleQuantityToChange = e => {
         this.props.productStore.setFilterDataQuantityTo(e.target.value)
+    }
+
+    handleOrderButtonClick = (e, orderBy, sortingDirection, buttonName) => {
+        this.props.productStore.setOrderBy(orderBy)
+        this.props.productStore.setSortingDirection(sortingDirection)
+        this.setState({ activeOrderButton: buttonName })
     }
 
     handleAddToCart = (e, productId) => {
