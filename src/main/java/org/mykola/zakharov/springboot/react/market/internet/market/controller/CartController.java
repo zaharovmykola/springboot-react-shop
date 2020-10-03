@@ -11,19 +11,16 @@ import org.mykola.zakharov.springboot.react.market.internet.market.service.Payme
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
 @Controller
 @RequestMapping("/api/cart")
 public class CartController {
 
     @Autowired
-    private CartService productService;
+    private CartService cartService;
 
     @Autowired
     private PaymentService paymentService;
@@ -31,77 +28,63 @@ public class CartController {
     // внедрение объекта сеанса http через аргумент метода
     @GetMapping("")
     @ResponseBody
-    public ResponseEntity<ResponseModel> getCartItems(HttpSession httpSession) {
-        Cart cart = (Cart) httpSession.getAttribute("CART");
-        if (cart == null) {
-            cart = new Cart();
-        }
-        return new ResponseEntity<>(productService.getCartItems(cart), HttpStatus.OK);
+    public ResponseEntity<ResponseModel> getCartItems(Authentication authentication) {
+        return new ResponseEntity<>(
+                cartService.getCartItems(authentication),
+                HttpStatus.OK
+        );
     }
 
     @PostMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<ResponseModel> addCartItemCount(@PathVariable("id") Long id, HttpSession httpSession) {
-        // попытка извлечь из объекта сеанса объект корзины
-        Cart cart = (Cart) httpSession.getAttribute("CART");
-        if (cart == null) {
-            // если не удалось - создаем новый объект корзины
-            cart = new Cart();
-        }
+    public ResponseEntity<ResponseModel> addCartItemCount(
+            @PathVariable("id") Long id,
+            Authentication authentication
+    ) {
         // вызов метода службы - увеличить число товара в корзине на 1
         ResponseModel response =
-                productService.changeCartItemCount(
-                        cart
+                cartService.changeCartItemCount(
+                        authentication
                         , id
                         , CartItem.Action.ADD
                 );
-        // сохранение объекта корзины в сеанс -
-        // первичное или обновление
-        httpSession.setAttribute("CART", cart);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<ResponseModel> subtractCartItemCount(@PathVariable("id") Long id, HttpSession httpSession) throws InstantiationException, IllegalAccessException {
-        Cart cart = (Cart) httpSession.getAttribute("CART");
-        if (cart == null) {
-            cart = new Cart();
-        }
+    public ResponseEntity<ResponseModel> subtractCartItemCount(
+            @PathVariable("id") Long id,
+            Authentication authentication
+    ) {
         ResponseModel response =
-                productService.changeCartItemCount(
-                        cart
+                cartService.changeCartItemCount(
+                        authentication
                         , id
                         , CartItem.Action.SUB
                 );
-        httpSession.setAttribute("CART", cart);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")
     @ResponseBody
-    public ResponseEntity<ResponseModel> deleteCartItem(@PathVariable("id") Long id, HttpSession httpSession) {
-        Cart cart = (Cart) httpSession.getAttribute("CART");
-        if (cart == null) {
-            cart = new Cart();
-        }
+    public ResponseEntity<ResponseModel> deleteCartItem(
+            @PathVariable("id") Long id,
+            Authentication authentication
+    ) {
         ResponseModel response =
-                productService.changeCartItemCount(
-                        cart
+                cartService.changeCartItemCount(
+                        authentication
                         , id
                         , CartItem.Action.REM
                 );
-        httpSession.setAttribute("CART", cart);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // этот метод нужно вызвать с фронтенда синхронно
     @GetMapping("/pay")
-    public String payment(HttpSession httpSession, HttpServletResponse response) throws PayPalRESTException, IOException {
-        Cart cart = (Cart) httpSession.getAttribute("CART");
-        if (cart == null) {
-            cart = new Cart();
-        }
+    public String payment(Authentication authentication) throws PayPalRESTException {
+        Cart cart = cartService.getCart(authentication);
         Payment payment =
                 paymentService.createPayment(
                         cart,
@@ -109,8 +92,8 @@ public class CartController {
                         "paypal",
                         "sale",
                         "testing",
-                        "http://localhost:8090/eCommerceShop/api/cart/pay/cancel",
-                        "http://localhost:8090/eCommerceShop/api/cart/pay/success"
+                        "http://localhost:8090/simplespa/api/cart/pay/cancel",
+                        "http://localhost:8090/simplespa/api/cart/pay/success"
                 );
         for(Links link : payment.getLinks()) {
             // после того, как пользователь сделал выбор на странице агрегатора,
@@ -134,15 +117,11 @@ public class CartController {
     public String successPay(
             @RequestParam("paymentId") String paymentId,
             @RequestParam("PayerID") String payerId,
-            HttpSession httpSession
+            Authentication authentication
     ) throws PayPalRESTException {
         // завершение платежа
         paymentService.executePayment(paymentId, payerId);
-        Cart cart = (Cart) httpSession.getAttribute("CART");
-        if (cart == null) {
-            cart = new Cart();
-        }
-        cart.getCartItems().clear();
+        cartService.clearCartItems(authentication);
         // возврат перенаправления вместо имени представления -
         // на страницу, сообщающую об успешном завершении оплаты
         return "redirect:/payment:success";

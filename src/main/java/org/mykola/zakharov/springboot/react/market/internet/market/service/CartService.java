@@ -1,12 +1,15 @@
 package org.mykola.zakharov.springboot.react.market.internet.market.service;
 
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.CartMongoDAO;
 import org.mykola.zakharov.springboot.react.market.internet.market.dao.ProductHibernateDAO;
+import org.mykola.zakharov.springboot.react.market.internet.market.dao.UserHibernateDAO;
 import org.mykola.zakharov.springboot.react.market.internet.market.entity.Product;
 import org.mykola.zakharov.springboot.react.market.internet.market.model.Cart;
 import org.mykola.zakharov.springboot.react.market.internet.market.model.CartItem;
 import org.mykola.zakharov.springboot.react.market.internet.market.model.ResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
 
 import java.util.Optional;
 
@@ -16,16 +19,46 @@ public class CartService {
     @Autowired
     private ProductHibernateDAO productDAO;
 
-    public ResponseModel getCartItems(Cart cart) {
-        return ResponseModel.builder()
-                .status(ResponseModel.SUCCESS_STATUS)
-                .message("Cart data fetched successfully")
-                .data(cart.getCartItems())
-                .build();
+    @Autowired
+    private UserHibernateDAO userDAO;
+
+    @Autowired
+    private CartMongoDAO cartDAO;
+
+    public Cart getCart(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            Long userId =
+                    userDAO.findUserByName(authentication.getName()).getId();
+            Cart cart = cartDAO.findCartByUserId(userId);
+            if (cart == null) {
+                cart = new Cart();
+                cart.setUserId(userId);
+            }
+            return cart;
+        } else {
+            return null;
+        }
+    }
+
+    public ResponseModel getCartItems (Authentication authentication) {
+        Cart cart = getCart(authentication);
+        if (cart != null) {
+            return ResponseModel.builder()
+                    .status(ResponseModel.SUCCESS_STATUS)
+                    .message("Cart data fetched successfully")
+                    .data(cart.getCartItems())
+                    .build();
+        } else {
+            return ResponseModel.builder()
+                    .status(ResponseModel.FAIL_STATUS)
+                    .message("No cart")
+                    .build();
+        }
     }
 
     // изменить число определенного товара в объекте корзины
-    public ResponseModel changeCartItemCount(Cart cart, Long productId, CartItem.Action action) {
+    public ResponseModel changeCartItemCount(Authentication authentication, Long productId, CartItem.Action action) {
+        Cart cart = getCart(authentication);
         CartItem currentCartItem = null;
         // в БД находим описание товара по его ИД
         Product product = productDAO.findById(productId).get();
@@ -72,10 +105,22 @@ public class CartService {
                     break;
             }
         }
+        // сохранение объекта корзины в MongoDB -
+        // первичное или обновление
+        cartDAO.save(cart);
         return ResponseModel.builder()
                 .status(ResponseModel.SUCCESS_STATUS)
                 .message("Cart data changed successfully")
                 .data(cart.getCartItems())
                 .build();
     }
+
+    public void clearCartItems (Authentication authentication) {
+        Cart cart = getCart(authentication);
+        if (cart != null) {
+            cart.getCartItems().clear();
+            cartDAO.save(cart);
+        }
+    }
+
 }
